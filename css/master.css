@@ -53,6 +53,12 @@ a:hover{
   position: relative;
 }
 
+.descript{
+  font-size: 2.5rem;
+  width: 45%;
+  margin: auto;
+}
+
 .skills{
   /* position: relative; */
   list-style: none;
