@@ -4,10 +4,21 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="description" content="My Web Portfolio">
+		<meta http-equiv="Content-Security-Policy" content="
+				default-src 'self'; 
+				script-src 'self' https://ajax.googleapis.com 'unsafe-inline'; 
+				style-src 'self' https://fonts.googleapis.com; 
+				font-src https://fonts.gstatic.com">
 		<title>Aarav Juneja</title>
 		<link rel="stylesheet" href="./css/master.min.css">
+		<!-- <link rel="preload" href="https://fonts.googleapis.com/css2?family=Merriweather&family=Montserrat&family=Sacramento&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'"> -->
 		<link href="https://fonts.googleapis.com/css2?family=Merriweather&family=Montserrat&family=Sacramento&display=swap" rel="stylesheet">
 		<link rel="icon" href="favicon.ico">
+
+		<noscript>
+			<!-- <link rel="stylesheet" 
+				href="https://fonts.googleapis.com/css2?family=Merriweather&family=Montserrat&family=Sacramento&display=swap"> -->
+		</noscript>
 	</head>
 	<body>
 		<div class="top-container">
@@ -61,7 +72,7 @@
 		<a class="footer-link" href="https://www.linkedin.com/aarav-juneja">LinkedIn</a>
 		<p>© <span id="date"></span> Aarav Juneja.</p>
 		</div>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" defer></script>
 		<script src="./js/index.min.js"></script>
 	</body>
 </html>
