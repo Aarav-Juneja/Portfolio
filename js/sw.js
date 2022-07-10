@@ -1,5 +1,5 @@
 const version = 1.0;
-const cachName = `files-${version}`
+const cacheName = `files-${version}`
 
 // self.ski[pWaiting()
 
