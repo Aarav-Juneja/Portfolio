@@ -1,4 +1,4 @@
-$("#date").append(new Date().getFullYear())
+$("#date").append(new Date().getFullYear());
 if('serviceWorker' in navigator) {
     // Register service worker
     navigator.serviceWorker.register('sw.js').then(function(reg){
@@ -14,7 +14,7 @@ if('serviceWorker' in navigator) {
     });
 
     navigator.serviceWorker.ready.then(r => {
-        console.log("SW ready navigator: ". r.active)
+        console.log("SW ready navigator: ", r.active)
         console.log(navigator.serviceWorker.controller) // active and in control of page
         // ^ returns an ServiceWorker
         // can only be in control if page load when workie ther
