@@ -1,4 +1,5 @@
-$("#date").append(new Date().getFullYear());
+// $("#date").append(new Date().getFullYear());
+document.querySelector("#date").appendChild(new Date().getFullYear())
 if('serviceWorker' in navigator) {
     // Register service worker
     navigator.serviceWorker.register('sw.js').then(function(reg){
