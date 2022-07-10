@@ -4,7 +4,7 @@ const cacheName = `files-${version}`
 // self.ski[pWaiting()
 
 const putInCache = async (request, response) => {
-    const cache = await caches.open("v1");
+    const cache = await caches.open(cacheName);
     await cache.put(request, response);
 }
 
@@ -67,7 +67,7 @@ self.addEventListener("activate", e => {
 })
 
 self.addEventListener("fetch", e => {
-    e.respondWith(caches.open(cacheName).then(cache => {
+    e.respondWith(/*caches.open(cacheName).then(cache => {
         /*
         return cache.match(e.request.url).then(res => {
             /*
@@ -87,9 +87,9 @@ self.addEventListener("fetch", e => {
                 console.log('y');
                 // return fetch(e.request)
             }
-        })*/
+        })
 
         networkFirst(e.request, e.preloadResponse)
-    }))
+    })*/)
     // e.respondWith(fetch(e.request))
 })
