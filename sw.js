@@ -89,7 +89,9 @@ self.addEventListener("fetch", e => {
             }
         })
 
+        
+    })*/
         networkFirst(e.request, e.preloadResponse)
-    })*/)
+        )
     // e.respondWith(fetch(e.request))
 })
