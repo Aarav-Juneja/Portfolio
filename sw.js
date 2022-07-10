@@ -54,7 +54,7 @@ self.addEventListener("install", e => {
             // cache.add("index.html")
             cache.addAll(["/css/master.min.css", "js/index.min.js", "index.html"])
         })
-        )
+    )
 })
 
 self.addEventListener("activate", e => {
