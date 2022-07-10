@@ -38,7 +38,7 @@ hr{
 }
 
 a{
-  color: #052a2c;
+  color: #0b008a;
   margin: 10px 20px;
   text-decoration: none;
 }
@@ -107,9 +107,7 @@ a:hover{
 }
 
 .copyright{
-  color: #EAF6F6;
-  font-size: 0.75rem;
-  padding: 20px 0;
+  color: #000000;
 }
 
 /* XXX: Images */
