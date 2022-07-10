@@ -22,7 +22,7 @@ self.addEventListener("activate", e => {
 })
 
 self.addEventListener("fetch", e => {
-    e.respondWith(caches.open("files").then(cache => {
+    e.respondWith(caches.open(cacheName).then(cache => {
         return cache.match(e.request.url).then(res => {
             if (res) {
                 return fetch(e.request) || res;
