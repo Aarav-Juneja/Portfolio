@@ -7,7 +7,7 @@ self.addEventListener("install", e => {
     e.waitUntil(
         caches.open(cacheName).then(cache => {
             // cache.add("index.html")
-            cache.addAll(["/css/master.css", "js/index.js", "index.html"])
+            cache.addAll(["/css/master.min.css", "js/index.min.js", "index.html"])
         })
         )
 })
@@ -25,10 +25,13 @@ self.addEventListener("fetch", e => {
     e.respondWith(caches.open(cacheName).then(cache => {
         return cache.match(e.request.url).then(res => {
             if (res) {
+                console.log('x')
                 return fetch(e.request) || res;
             } else {
                 // cache.add(res)
-                return fetch(e.request)
+                // I find it faster to leave it by itself
+                console.log('y');
+                // return fetch(e.request)
             }
         })
     }))

@@ -1,6 +1,8 @@
 {
     "name": "Aarav Juneja's Acheivments, Skills, and other stuff",
     "short_name": "Aarav's' Portfolio",
+    "description": "A portfolio to display my acheivements over the years and show what course I have completed",
     "start_url": "/",
-    "display": "standalone"
+    "display": "standalone",
+    "theme_color": "#e4f9f5"
 }
