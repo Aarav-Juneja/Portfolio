@@ -19,6 +19,9 @@ const networkFirst = async (request, preloadResponsePromise) => {
     // First try to get the resource from the network
     try {
         const responseFromNetwork = await fetch(request);
+
+        console.info("Using response from network")
+
         // response may be used only once
         // we need to save clone to put one copy in cache
         // and serve second one
@@ -28,6 +31,7 @@ const networkFirst = async (request, preloadResponsePromise) => {
         // Next try to get the resource from the cache
         const responseFromCache = await caches.match(request);
         if (responseFromCache) {
+            console.info("using response from cache")
             return responseFromCache;
         }
 
