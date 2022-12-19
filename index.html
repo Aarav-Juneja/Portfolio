@@ -2,49 +2,66 @@
 <html lang="en" dir="ltr">
 	<head>
 		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="My Web Portfolio">
+		<meta name="theme-color" content="#e4f9f5">
+		<meta http-equiv="Content-Security-Policy" content="
+				default-src 'self'; 
+				script-src 'nonce-jknorf123oijew1' 'nonce-applpie' 'strict-dynamic' 'self' https://ajax.googleapis.com 'unsafe-inline'; 
+				style-src 'self' https://fonts.googleapis.com; 
+				font-src https://fonts.gstatic.com">
 		<title>Aarav Juneja</title>
-		<link rel="stylesheet" href="./css/master.css">
+		<link rel="stylesheet" href="./css/master.min.css">
+		<!-- <link rel="preload" href="https://fonts.googleapis.com/css2?family=Merriweather&family=Montserrat&family=Sacramento&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'"> -->
 		<link href="https://fonts.googleapis.com/css2?family=Merriweather&family=Montserrat&family=Sacramento&display=swap" rel="stylesheet">
 		<link rel="icon" href="favicon.ico">
+		<link rel="manifest" href="app.webmanifest">
+
+		<script nonce="applpie"></script>
+
+		<noscript>
+			<!-- <link rel="stylesheet" 
+				href="https://fonts.googleapis.com/css2?family=Merriweather&family=Montserrat&family=Sacramento&display=swap"> -->
+		</noscript>
 	</head>
 	<body>
 		<div class="top-container">
-			<img class="top-cloud" src="images/cloud.png" alt="cloud image">
+			<img class="top-cloud" src="images/cloud.png" alt="cloud image" width="150" height="48">
 			<h1>I'm Aarav</h1>
-			<h2 class="code">a <span class="pro">code</span>r.</h2>
-			<img class="bottom-cloud" src="images/cloud.png" alt="Colud Image">
-			<img src="images/mountain.png" alt="Mounatin Image">
+			<h2 class="code descript">a 6th grade programmer and future entrepreneur.</h2>
+			<img class="bottom-cloud" src="images/cloud.png" alt="Cloud Image" width="150" height="48">
+			<img src="images/me2.png" alt="Mounatin Image" width="233" height="233"> 
 		</div>
 		<div class="middle-container">
 		<div class="profile">
-			<img src="images/me.jpg" alt="A picture of me">
+			<!-- <img src="images/me2.png" alt="A picture of me"> -->
 			<h2>Hello</h2>
-			<p class="intro">I am a 5th grade coder who is enrolled in CS50 and a London App Brewery course.</p>
+			<p class="intro">I am a 6th grade coder who is enrolled in CS50 and a London App Brewery course.</p>
 		</div>
 		<hr>
+		<h2>My Skills.</h2>
 		<ul class="skills">
-			<h2>My Skills.</h2>
 			<li class="skill-row">
-				<img class="even" src="images/computer.png" alt="A computer">
+				<img class="even" src="images/computer.png" alt="A computer" width="400" height="400">
 				<h3>Coding</h3>
 				<p class="even-skill-paragraph">This is my biggest skill. Some languages I code in include HTML, CSS, and Javascript. I also know Python, Bootstrap, and a bit of Java</p>
 			</li>
 			<li class="skill-row">
-				<img class="odd" src="images/chillies.png" alt="The London App Brewery">
+				<img class="odd" src="images/london.png" alt="The London App Brewery" width="280" height="280">
 				<h3>The Complete Web Development BootCamp</h3>
 				<p class="odd-skill-paragraph">In all of the courses I took, I feel that this course has taught me the bost compared to any other. 
 					I went from the basics of this literal site to deepest methods of security with Google OAuth. 
 					I made multiple servers using Node.js and deployed some on Heroku. I got this very domain and set it up for many future things to come.</p>
 			</li>
 			<li class="skill-row">
-				<img class="even" src="images/CS50X.jpg" alt="CS50x">
+				<img class="even" src="images/CS50X.jpg" alt="CS50x" width="623" height="350">
 				<h3>CS50x</h3>
 				<p class="even-skill-paragraph">CS50 is Harvard course that I finished when I was ten. It had multiple problem sets building up from the core of binary all the way to web servers with python.</p>
 			</li>
 			<li class="skill-row">
 				<img class="odd" src="images/CS50AI.webp" alt="CS50 AI">
 				<h3>CS50 AI</h3>
-				<p class="odd-skill-paragraph">This was my next big step with technology. After less then one and a half years, I finished CS50 AI. This went through search algorithims through neural networks and and NLP(Naturl Language Processing)</p>
+				<p class="odd-skill-paragraph">This was my next big step with technology. After less then one and a half years, I finished CS50 AI. This went through search algorithims through neural networks and and NLP(Natural Language Processing)</p>
 			</li>
 		</ul>
 		<hr>
@@ -57,9 +74,9 @@
 		</div>
 		<div class="bottom-container">
 		<a class="footer-link" href="https://www.linkedin.com/aarav-juneja">LinkedIn</a>
-		<p>© <span id="date"></span> Aarav Juneja.</p>
+		<p class="copyright">© <span id="date"></span> Aarav Juneja.</p>
 		</div>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-		<script src="./js/index.js"></script>
+		<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" defer></script> -->
+		<script src="./js/index.min.js" defer nonce="jknorf123oijew1"></script>
 	</body>
 </html>
