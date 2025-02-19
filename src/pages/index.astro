@@ -1,0 +1,53 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import Image from "astro/components/Image.astro";
+import Course from "~/components/Course.astro";
+
+import photo from "~/assets/images/photo.jpeg";
+
+import data, { categories } from "~/data";
+
+// import CS50Cybersecurity from "~/assets/images/courses/CS50Cybersecurity.jpg";
+
+// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
+// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+---
+
+<Layout>
+    <div
+        class="bg-cyan-200 flex flex-col items-center justify-center h-1/3 pt-16 pb-8 p-2"
+    >
+        <Image
+            src={photo}
+            alt="Aarav J."
+            class="rounded-full"
+            width={200}
+            height={200}
+        />
+        <h2>Hey, I'm Aarav J.</h2>
+        <p class="mt-2">
+            I'm a high school student with a passion for computer science.
+        </p>
+    </div>
+    <div class="bg-amber-200 p-5">
+        <h2>Some Accomplishments:</h2>
+        <div class="grid grid-cols-2">
+            {
+                categories.map(category => (
+                    <div class="m-2">
+                        <h3>{category.name}</h3>
+                        <ul>
+                            {category.courses.map(course => (
+                                <Course {...course} />
+                            ))}
+                        </ul>
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+    <!-- <div class="bg-cyan-200 p-5">
+        <h2>Some <span class="underline">Accomplishments</span>:</h2>
+        {data.map(course => <Course {...course} />)}
+    </div> -->
+</Layout>
