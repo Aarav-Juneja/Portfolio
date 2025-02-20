@@ -1,0 +1,23 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection, render } from "astro:content";
+// This is basically a template, but do I care?
+import Layout from "~/layouts/Markdown.astro";
+import { urlSafeTransform } from "~/utils";
+
+export const getStaticPaths = (async () => {
+    const posts = await getCollection("blog");
+
+    return posts.map(post => ({
+        params: {
+            id: urlSafeTransform(post.id),
+        },
+        props: { post },
+    }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<Layout><Content /></Layout>
