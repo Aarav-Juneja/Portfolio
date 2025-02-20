@@ -1,5 +1,6 @@
 import CS50x from "~/assets/images/courses/CS50X.jpg";
 import CS50AI from "~/assets/images/courses/CS50AI.webp";
+import Presentation from "~/assets/images/courses/presentation.jpeg";
 
 export default [
     {
@@ -43,6 +44,12 @@ export const categories = [
                 description:
                     "Learned the basics of AI from search algorithms to neural networks from Harvard.",
                 image: CS50AI,
+            },
+            {
+                title: "Presentation on AI Accuracy in Cybersecurity and it's implications",
+                description:
+                    "Gave a presentation along with Stanford Professor Neil Daswani on the implications on AI accuracy and some data I had collected on various AIs dealing with Cybersecurity",
+                image: Presentation,
             },
         ],
     },
