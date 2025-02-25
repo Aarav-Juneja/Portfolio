@@ -20,4 +20,4 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 ---
 
-<Layout><Content /></Layout>
+<Layout title={post.data.title}><Content /></Layout>

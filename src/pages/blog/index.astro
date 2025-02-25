@@ -13,7 +13,7 @@ const posts = await getCollection("blog");
             {
                 posts.map(post => (
                     <li class="btn my-2">
-                        <a href={urlSafeTransform(post.data.title)}>
+                        <a href={"/blog/" + urlSafeTransform(post.data.title)}>
                             {post.data.title}
                         </a>
                     </li>

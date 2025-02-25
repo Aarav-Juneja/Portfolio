@@ -1,9 +1,13 @@
 ---
 import Layout from "./Layout.astro";
+import "~/styles/markdown.css";
+
+const { title } = Astro.props;
 ---
 
-<Layout>
-    <div class="pt-16 mb-auto px-5">
+<Layout navbar.shadow={true}>
+    <div class="pt-20 mb-auto px-5 py-5">
+        {title && <h1>{title}</h1>}
         <slot />
     </div>
 </Layout>

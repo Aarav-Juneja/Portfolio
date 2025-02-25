@@ -4,6 +4,12 @@ import { Icon } from "astro-icon/components";
 
 // Technincally comptime, but hopefully that doesn't matter
 const year = new Date().getFullYear();
+
+interface Props {
+    "navbar.shadow"?: true;
+}
+
+const props: Props = Astro.props;
 ---
 
 <!doctype html>
@@ -18,7 +24,10 @@ const year = new Date().getFullYear();
     </head>
     <body>
         <div class="flex flex-col min-h-screen">
-            <nav class="navbar absolute">
+            <nav
+                class={"navbar absolute " +
+                    (props?.["navbar.shadow"] && "shadow-md")}
+            >
                 <!-- Create Flex-1 dev to take over -->
                 <div class="flex-1 ml-3">
                     <a href="/" class="font-semibold text-lg">Aarav Juneja</a>
@@ -27,6 +36,7 @@ const year = new Date().getFullYear();
                     <li>
                         <a href="/">Home</a>
                     </li>
+                    <li><a href="/blog">Blog</a></li>
                     <!-- <li>
                         <a href="/projects">Projects</a>
                     </li>
