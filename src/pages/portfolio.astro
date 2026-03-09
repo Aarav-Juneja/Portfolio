@@ -1,0 +1,319 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+import {
+    experience,
+    clubPositions,
+    competitions,
+    skillCategories,
+    goals,
+    outsideCoursework,
+    additionalActivities,
+    externalLinks,
+    volunteering,
+} from "~/portfolio-data";
+---
+
+<Layout>
+    <div class="pt-24 pb-12 px-4 max-w-5xl mx-auto">
+        <h1 class="text-4xl font-bold text-primary font-mono mb-2">
+            <span class="animate-pulse">></span> Portfolio
+        </h1>
+        <p class="text-base-content/60 font-mono text-sm mb-8">
+            Detailed overview of achievements, certifications, and activities
+        </p>
+
+        <div class="space-y-12">
+            <!-- External Links -->
+            <section>
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                    <span class="text-primary">🔗</span> Connect
+                </h2>
+                <div class="flex flex-wrap gap-4">
+                    {
+                        externalLinks.map((link) => (
+                            <a
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn btn-outline btn-primary hover:btn-accent"
+                            >
+                                <Icon
+                                    name={
+                                        link.icon === "linkedin"
+                                            ? "mdi:linkedin"
+                                            : link.icon === "github"
+                                              ? "mdi:github"
+                                              : link.icon === "discord"
+                                                ? "ic:baseline-discord"
+                                                : "mdi:email"
+                                    }
+                                    size={20}
+                                />
+                                <span class="ml-2">{link.name}</span>
+                            </a>
+                        ))
+                    }
+                </div>
+            </section>
+
+            <!-- Experience -->
+            <section>
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                    <span class="text-primary">💼</span> Experience
+                </h2>
+                <div class="space-y-4">
+                    {
+                        experience.map((exp) => (
+                            <div class="card bg-base-200">
+                                <div class="card-body">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="card-title text-base">
+                                            {exp.title}
+                                        </h3>
+                                        <span class="badge badge-primary badge-outline">
+                                            {exp.period}
+                                        </span>
+                                    </div>
+                                    <p class="text-accent text-sm">
+                                        {exp.organization}
+                                    </p>
+                                    <p class="text-base-content/70 text-sm mt-2">
+                                        {exp.description}
+                                    </p>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </section>
+
+            <!-- Additional Activities -->
+            <section>
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                    <span class="text-accent">🎯</span> Additional Activities
+                </h2>
+                <div class="space-y-4">
+                    {
+                        additionalActivities.map((activity) => (
+                            <div class="card bg-base-200">
+                                <div class="card-body">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="card-title text-base">
+                                            {activity.title}
+                                        </h3>
+                                        <span class="badge badge-sm badge-outline">
+                                            {activity.year}
+                                        </span>
+                                    </div>
+                                    <p class="text-base-content/70 text-sm mt-1">
+                                        {activity.description}
+                                    </p>
+                                    {activity.type === "bugbounty" && (
+                                        <div class="badge badge-primary mt-2">
+                                            Bug Bounty
+                                        </div>
+                                    )}
+                                    {activity.type === "conference" && (
+                                        <div class="badge badge-accent mt-2">
+                                            Conference
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </section>
+
+            <!-- Club Positions -->
+            <section>
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                    <span class="text-primary">🏫</span> Club Positions
+                </h2>
+                <div class="grid md:grid-cols-3 gap-4">
+                    {
+                        clubPositions.map((pos) => (
+                            <div class="card bg-base-200">
+                                <div class="card-body items-center text-center p-4">
+                                    <h3 class="font-semibold">{pos.title}</h3>
+                                    <p class="text-sm text-base-content/70">
+                                        {pos.organization}
+                                    </p>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </section>
+
+            <!-- Outside Coursework -->
+            <section>
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                    <span class="text-accent">🎓</span> Outside Coursework
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra">
+                        <thead>
+                            <tr>
+                                <th>Course</th>
+                                <th>Issuer</th>
+                                <th>Year</th>
+                                <th>Certificate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                outsideCoursework.map((course) => (
+                                    <tr>
+                                        <td class="font-semibold">
+                                            {course.name}
+                                        </td>
+                                        <td>{course.issuer}</td>
+                                        <td>{course.year}</td>
+                                        <td>
+                                            {course.link ? (
+                                                <a
+                                                    href={course.link}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    class="btn btn-xs btn-primary"
+                                                >
+                                                    View
+                                                </a>
+                                            ) : (
+                                                <span class="badge badge-sm badge-ghost">
+                                                    -
+                                                </span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Competitions -->
+            <section>
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                    <span class="text-primary">🏆</span> Competitions
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra">
+                        <thead>
+                            <tr>
+                                <th>Competition</th>
+                                <th>Full Name</th>
+                                <th>Year</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                competitions.map((comp) => (
+                                    <tr
+                                        class={
+                                            comp.highlight
+                                                ? "bg-primary/10"
+                                                : ""
+                                        }
+                                    >
+                                        <td class="font-semibold">
+                                            {comp.name}
+                                        </td>
+                                        <td>{comp.fullName}</td>
+                                        <td>
+                                            {comp.years
+                                                ? comp.years.join(", ")
+                                                : comp.year}
+                                        </td>
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Volunteering -->
+            <section>
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                    <span class="text-primary">🤝</span> Volunteering
+                </h2>
+                <div class="space-y-4">
+                    {
+                        volunteering.map((vol) => (
+                            <div class="card bg-base-200">
+                                <div class="card-body">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="card-title text-base">
+                                            {vol.title}
+                                        </h3>
+                                        <span class="badge badge-sm badge-outline">
+                                            {vol.year}
+                                        </span>
+                                    </div>
+                                    <p class="text-base-content/70 text-sm mt-1">
+                                        {vol.description}
+                                    </p>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </section>
+
+            <!-- Skills -->
+            <section>
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                    <span class="text-accent">⚡</span> Skills
+                </h2>
+                <div class="space-y-4">
+                    {
+                        skillCategories.map((category) => (
+                            <div class="card bg-base-200">
+                                <div class="card-body">
+                                    <h3 class="card-title text-base">
+                                        {category.name}
+                                    </h3>
+                                    <div class="flex flex-wrap gap-2 mt-2">
+                                        {category.skills.map((skill) => (
+                                            <span class="badge badge-outline">
+                                                {skill}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </section>
+
+            <!-- Goals -->
+            <section>
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                    <span class="text-primary">🎯</span> Current Goals
+                </h2>
+                <div class="grid md:grid-cols-3 gap-4">
+                    {
+                        goals.map((goal) => (
+                            <div class="card bg-base-200">
+                                <div class="card-body items-center text-center">
+                                    <span class="text-3xl">{goal.icon}</span>
+                                    <h3 class="font-semibold mt-2">
+                                        {goal.title}
+                                    </h3>
+                                    <p class="text-sm text-base-content/70">
+                                        {goal.description}
+                                    </p>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </section>
+        </div>
+    </div>
+</Layout>

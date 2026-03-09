@@ -1,0 +1,32 @@
+---
+import { skillCategories } from "~/portfolio-data";
+---
+
+<section id="skills" class="py-20 px-4 bg-base-200/50">
+    <div class="max-w-5xl mx-auto">
+        <h2 class="text-3xl font-bold mb-12 text-center">
+            <span class="border-b-4 border-primary pb-2">Skills</span>
+        </h2>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            {skillCategories.map((category, catIndex) => (
+                <div class="card bg-base-300 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+                     style={`animation-delay: ${catIndex * 100}ms`}>
+                    <div class="card-body">
+                        <h3 class="card-title flex items-center gap-2 text-lg">
+                            <span class="text-primary">{category.name}</span>
+                        </h3>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            {category.skills.map((skill, skillIndex) => (
+                                <div class="badge badge-outline badge-lg hover:badge-accent transition-colors duration-200 cursor-default"
+                                     style={`animation: fadeInUp 0.5s ease forwards ${(catIndex * 100) + (skillIndex * 50)}ms; opacity: 0;`}>
+                                    {skill}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    </div>
+</section>

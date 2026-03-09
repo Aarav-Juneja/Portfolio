@@ -1,0 +1,447 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import {
+    profile,
+    experience,
+    clubPositions,
+    awards,
+    competitions,
+    skillCategories,
+    goals,
+    outsideCoursework,
+    coursework,
+    additionalActivities,
+    externalLinks,
+    volunteering,
+} from "~/portfolio-data";
+
+const bugBounties = additionalActivities.filter((a) => a.type === "bugbounty");
+const conferences = additionalActivities.filter((a) => a.type === "conference");
+
+const data = {
+    education: profile,
+    coursework,
+    experience: experience.map((e) => ({
+        title: e.title,
+        org: e.organization,
+        period: e.period,
+        details: e.description,
+    })),
+    clubPositions,
+    awards: awards.map((a) => ({
+        title: a.title,
+        year: a.year,
+        details: a.description,
+    })),
+    competitions: competitions.map((c) => ({
+        name: c.name,
+        full: c.fullName,
+        year: c.years ? c.years.join(", ") : c.year || "",
+    })),
+    skills: {
+        languages:
+            skillCategories.find((c) => c.name === "Programming Languages")
+                ?.skills || [],
+        cybersecurity:
+            skillCategories.find((c) => c.name === "Cybersecurity")?.skills ||
+            [],
+        tools:
+            skillCategories.find((c) => c.name === "Tools & Technologies")
+                ?.skills || [],
+    },
+    goals: goals.map((g) => g.title),
+    outsideCoursework: outsideCoursework.map((c) => ({
+        name: c.name,
+        issuer: c.issuer,
+        year: c.year,
+        link: c.link,
+    })),
+    additional: additionalActivities.map((a) => ({
+        title: a.title,
+        year: a.year,
+        details: a.description,
+        link: a.link || null,
+    })),
+    bugBounties: bugBounties.map((b) => ({
+        title: b.title,
+        year: b.year,
+    })),
+    conferences: conferences.map((c) => ({
+        title: c.title,
+        year: c.year,
+        details: c.description,
+        link: c.link || null,
+    })),
+    volunteering: volunteering.map((v) => ({
+        title: v.title,
+        year: v.year,
+    })),
+    links: externalLinks.map((l) => ({ name: l.name, url: l.url })),
+};
+---
+
+<Layout>
+    <div class="pt-24 pb-12 px-4 max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-primary font-mono mb-2">
+            <span class="animate-pulse">></span> ./reference.sh
+        </h1>
+        <p class="text-base-content/60 font-mono text-sm mb-8">
+            Quick lookup for all portfolio data
+        </p>
+
+        <div class="space-y-8">
+            <section class="card bg-base-200">
+                <div class="card-body">
+                    <h2 class="card-title font-mono text-primary">
+                        [EDUCATION]
+                    </h2>
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra font-mono text-sm">
+                            <tbody>
+                                <tr
+                                    ><td class="font-bold">School</td><td
+                                        >{data.education.school}</td
+                                    ></tr
+                                >
+                                <tr
+                                    ><td class="font-bold">Graduation</td><td
+                                        >Class of {
+                                            data.education.graduation
+                                        }</td
+                                    ></tr
+                                >
+                                <tr
+                                    ><td class="font-bold">GPA</td><td
+                                        >{data.education.gpa}</td
+                                    ></tr
+                                >
+                                <tr
+                                    ><td class="font-bold">Coursework</td><td
+                                        >{
+                                            data.coursework
+                                                .map((c) => c.name)
+                                                .join(", ")
+                                        }</td
+                                    ></tr
+                                >
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card bg-base-200">
+                <div class="card-body">
+                    <h2 class="card-title font-mono text-primary">
+                        [EXPERIENCE]
+                    </h2>
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra font-mono text-sm">
+                            <thead>
+                                <tr
+                                    ><th>Title</th><th>Org</th><th>Period</th
+                                    ><th>Details</th></tr
+                                >
+                            </thead>
+                            <tbody>
+                                {
+                                    data.experience.map((exp) => (
+                                        <tr>
+                                            <td class="font-bold">
+                                                {exp.title}
+                                            </td>
+                                            <td>{exp.org}</td>
+                                            <td>{exp.period}</td>
+                                            <td>{exp.details}</td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="divider font-mono text-xs opacity-50">
+                        Other Positions
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        {
+                            data.clubPositions.map((pos) => (
+                                <span class="badge badge-outline font-mono">
+                                    {pos.title} | {pos.organization}
+                                </span>
+                            ))
+                        }
+                    </div>
+                </div>
+            </section>
+
+            <section class="card bg-base-200">
+                <div class="card-body">
+                    <h2 class="card-title font-mono text-primary">[AWARDS]</h2>
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra font-mono text-sm">
+                            <thead>
+                                <tr
+                                    ><th>Award</th><th>Year</th><th>Details</th
+                                    ></tr
+                                >
+                            </thead>
+                            <tbody>
+                                {
+                                    data.awards.map((award) => (
+                                        <tr>
+                                            <td class="font-bold">
+                                                {award.title}
+                                            </td>
+                                            <td>{award.year}</td>
+                                            <td>{award.details}</td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card bg-base-200">
+                <div class="card-body">
+                    <h2 class="card-title font-mono text-primary">
+                        [COMPETITIONS]
+                    </h2>
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra font-mono text-sm">
+                            <thead>
+                                <tr
+                                    ><th>Short</th><th>Full Name</th><th
+                                        >Year(s)</th
+                                    ></tr
+                                >
+                            </thead>
+                            <tbody>
+                                {
+                                    data.competitions.map((comp) => (
+                                        <tr>
+                                            <td class="font-bold">
+                                                {comp.name}
+                                            </td>
+                                            <td>{comp.full || comp.name}</td>
+                                            <td>{comp.year}</td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card bg-base-200">
+                <div class="card-body">
+                    <h2 class="card-title font-mono text-primary">[SKILLS]</h2>
+                    <div class="space-y-3">
+                        <div>
+                            <span class="font-mono text-xs opacity-70"
+                                >Languages:</span
+                            >
+                            <div class="flex flex-wrap gap-1 mt-1">
+                                {
+                                    data.skills.languages.map((skill) => (
+                                        <span class="badge badge-sm badge-outline">
+                                            {skill}
+                                        </span>
+                                    ))
+                                }
+                            </div>
+                        </div>
+                        <div>
+                            <span class="font-mono text-xs opacity-70"
+                                >Cybersecurity:</span
+                            >
+                            <div class="flex flex-wrap gap-1 mt-1">
+                                {
+                                    data.skills.cybersecurity.map((skill) => (
+                                        <span class="badge badge-sm badge-primary badge-outline">
+                                            {skill}
+                                        </span>
+                                    ))
+                                }
+                            </div>
+                        </div>
+                        <div>
+                            <span class="font-mono text-xs opacity-70"
+                                >Tools:</span
+                            >
+                            <div class="flex flex-wrap gap-1 mt-1">
+                                {
+                                    data.skills.tools.map((skill) => (
+                                        <span class="badge badge-sm badge-accent badge-outline">
+                                            {skill}
+                                        </span>
+                                    ))
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card bg-base-200">
+                <div class="card-body">
+                    <h2 class="card-title font-mono text-primary">
+                        [OUTSIDE COURSEWORK]
+                    </h2>
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra font-mono text-sm">
+                            <thead>
+                                <tr
+                                    ><th>Course</th><th>Issuer</th><th>Year</th
+                                    ><th>Certificate</th></tr
+                                >
+                            </thead>
+                            <tbody>
+                                {
+                                    data.outsideCoursework.map((course) => (
+                                        <tr>
+                                            <td class="font-bold">
+                                                {course.name}
+                                            </td>
+                                            <td>{course.issuer}</td>
+                                            <td>{course.year}</td>
+                                            <td>
+                                                {course.link ? (
+                                                    <a
+                                                        href={course.link}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        class="btn btn-xs btn-primary"
+                                                    >
+                                                        View
+                                                    </a>
+                                                ) : (
+                                                    <span class="badge badge-ghost">
+                                                        -
+                                                    </span>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card bg-base-200">
+                <div class="card-body">
+                    <h2 class="card-title font-mono text-primary">
+                        [BUG BOUNTIES]
+                    </h2>
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra font-mono text-sm">
+                            <thead>
+                                <tr><th>Website</th><th>Year</th></tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    data.bugBounties.map((bounty) => (
+                                        <tr>
+                                            <td class="font-bold">
+                                                {bounty.title}
+                                            </td>
+                                            <td>{bounty.year}</td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card bg-base-200">
+                <div class="card-body">
+                    <h2 class="card-title font-mono text-primary">
+                        [ADDITIONAL ACTIVITIES]
+                    </h2>
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra font-mono text-sm">
+                            <thead>
+                                <tr
+                                    ><th>Activity</th><th>Year</th><th
+                                        >Details</th
+                                    ><th>Link</th></tr
+                                >
+                            </thead>
+                            <tbody>
+                                {
+                                    data.conferences.map((item) => (
+                                        <tr>
+                                            <td class="font-bold">
+                                                {item.title}
+                                            </td>
+                                            <td>{item.year}</td>
+                                            <td>{item.details}</td>
+                                            <td>
+                                                {item.link ? (
+                                                    <a
+                                                        href={item.link}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        class="btn btn-xs btn-primary"
+                                                    >
+                                                        View
+                                                    </a>
+                                                ) : (
+                                                    <span class="badge badge-ghost">
+                                                        -
+                                                    </span>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card bg-base-200">
+                <div class="card-body">
+                    <h2 class="card-title font-mono text-primary">
+                        [VOLUNTEERING]
+                    </h2>
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra font-mono text-sm">
+                            <thead>
+                                <tr><th>Activity</th><th>Year</th></tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    data.volunteering.map((vol) => (
+                                        <tr>
+                                            <td class="font-bold">
+                                                {vol.title}
+                                            </td>
+                                            <td>{vol.year}</td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card bg-base-200">
+                <div class="card-body">
+                    <h2 class="card-title font-mono text-primary">[GOALS]</h2>
+                    <ul class="list-disc list-inside font-mono">
+                        {data.goals.map((goal) => <li>{goal}</li>)}
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+</Layout>

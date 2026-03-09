@@ -1,53 +1,332 @@
 ---
 import Layout from "~/layouts/Layout.astro";
 import { Image } from "astro:assets";
-import Course from "~/components/Course.astro";
-
+import Experience from "~/components/Experience.astro";
+import Skills from "~/components/Skills.astro";
+import Awards from "~/components/Awards.astro";
+import Goals from "~/components/Goals.astro";
 import photo from "~/assets/images/photo.jpeg";
-
-import data, { categories } from "~/data";
-
-// import CS50Cybersecurity from "~/assets/images/courses/CS50Cybersecurity.jpg";
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
 <Layout>
-    <div
-        class="bg-cyan-200 flex flex-col items-center justify-center h-1/3 pt-16 pb-8 p-2"
+    <canvas
+        id="matrix-rain"
+        class="fixed inset-0 pointer-events-none opacity-10 z-0"></canvas>
+
+    <section
+        id="hero"
+        class="min-h-screen flex items-center justify-center pt-16 relative"
     >
-        <Image
-            src={photo}
-            alt="Aarav J."
-            class="rounded-full"
-            width={200}
-            height={200}
-        />
-        <h2>Hey, I'm Aarav J.</h2>
-        <p class="mt-2">
-            I'm a high school student with a passion for computer science.
-        </p>
-    </div>
-    <div class="bg-amber-200 p-5">
-        <h2>Some Accomplishments:</h2>
-        <div class="grid grid-cols-2">
-            {
-                categories.map(category => (
-                    <div class="m-2">
-                        <h3>{category.name}</h3>
-                        <ul>
-                            {category.courses.map(course => (
-                                <Course {...course} />
-                            ))}
-                        </ul>
-                    </div>
-                ))
-            }
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div
+                class="absolute top-20 left-10 w-2 h-2 bg-primary rounded-full animate-ping"
+            >
+            </div>
+            <div
+                class="absolute top-40 right-20 w-2 h-2 bg-accent rounded-full animate-ping"
+                style="animation-delay: 0.5s;"
+            >
+            </div>
+            <div
+                class="absolute bottom-40 left-1/4 w-2 h-2 bg-primary rounded-full animate-ping"
+                style="animation-delay: 1s;"
+            >
+            </div>
+            <div
+                class="absolute top-1/2 right-1/3 w-2 h-2 bg-accent rounded-full animate-ping"
+                style="animation-delay: 1.5s;"
+            >
+            </div>
         </div>
-    </div>
-    <!-- <div class="bg-cyan-200 p-5">
-        <h2>Some <span class="underline">Accomplishments</span>:</h2>
-        {data.map(course => <Course {...course} />)}
-    </div> -->
+
+        <div
+            class="relative z-10 flex flex-col md:flex-row items-center gap-12 px-4 max-w-6xl"
+        >
+            <div
+                class="relative group"
+                style="animation: fadeInUp 0.8s ease forwards;"
+            >
+                <div
+                    class="absolute inset-0 rounded-full border-2 border-dashed border-primary opacity-30 animate-spin"
+                    style="animation-duration: 10s;"
+                >
+                </div>
+                <Image
+                    src={photo}
+                    alt="Aarav J."
+                    class="relative rounded-full w-48 h-48 md:w-64 md:h-64 object-cover ring-4 ring-base-300 shadow-2xl"
+                    width={256}
+                    height={256}
+                />
+            </div>
+
+            <div
+                class="text-center md:text-left space-y-4"
+                style="animation: fadeInUp 0.8s ease 0.2s forwards; opacity: 0;"
+            >
+                <div class="font-mono text-sm text-primary opacity-80">
+                    <span class="animate-pulse">$</span> whoami
+                </div>
+                <h1
+                    class="text-4xl md:text-6xl font-bold text-primary font-mono"
+                >
+                    Aarav Juneja<span class="animate-pulse">_</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-base-content/80 font-medium">
+                    High School Sophomore @ Amador Valley High
+                </p>
+                <p class="text-lg text-base-content/60 font-mono">
+                    > GPA: 4.0 | Class of 2028
+                </p>
+
+                <div
+                    class="flex flex-wrap justify-center md:justify-start gap-2 mt-4"
+                >
+                    <span class="badge badge-primary badge-lg font-mono"
+                        >Cybersecurity</span
+                    >
+                    <span class="badge badge-accent badge-lg font-mono"
+                        >Full-Stack Dev</span
+                    >
+                </div>
+
+                <div class="flex justify-center md:justify-start gap-4 mt-6">
+                    <a
+                        href="https://linkedin.com/in/aarav-juneja"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="btn btn-primary btn-circle hover:scale-110 transition-transform"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            ><path
+                                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                            ></path></svg
+                        >
+                    </a>
+                    <a
+                        href="https://discord.com/users/1042177742331981945"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="btn btn-accent btn-circle hover:scale-110 transition-transform"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            ><path
+                                d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"
+                            ></path></svg
+                        >
+                    </a>
+                    <a
+                        href="mailto:foraaravj@gmail.com"
+                        class="btn btn-outline btn-circle hover:scale-110 transition-transform"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            ><rect width="20" height="16" x="2" y="4" rx="2"
+                            ></rect><path
+                                d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"
+                            ></path></svg
+                        >
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="opacity-50"><path d="m6 9 6 6 6-6"></path></svg
+            >
+        </div>
+    </section>
+
+    <section id="about" class="py-20 px-4 bg-base-200/30 relative z-10">
+        <div class="max-w-3xl mx-auto text-center">
+            <div class="font-mono text-sm text-primary mb-4 opacity-80">
+                <span>> cat about.txt</span>
+            </div>
+            <h2 class="text-3xl font-bold mb-8">
+                <span class="border-b-4 border-primary pb-2">About Me</span>
+            </h2>
+            <div class="prose prose-lg mx-auto">
+                <p class="text-lg leading-relaxed font-mono">
+                    <span class="text-primary">const</span> passion = [<span
+                        class="text-accent">"cybersecurity"</span
+                    >, <span class="text-accent">"building things"</span>];
+                </p>
+                <p class="text-lg leading-relaxed mt-4">
+                    I'm a <span class="text-primary font-semibold"
+                        >sophomore</span
+                    > at Amador Valley High School with a deep passion for
+                    <span class="text-accent font-semibold">cybersecurity</span> and
+                    <span class="text-primary font-semibold"
+                        >building things</span
+                    >. I love tackling complex challenges - whether it's
+                    breaking (and securing) code or building apps that people
+                    actually use.
+                </p>
+                <p class="text-lg leading-relaxed mt-4">
+                    When I'm not coding, you'll find me competing in chess,
+                    tinkering with new technologies, or exploring the latest in
+                    security research.
+                </p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 mt-8">
+                <div
+                    class="card bg-base-300 hover:bg-base-100 transition-colors cursor-pointer hover:scale-105 transform"
+                >
+                    <div class="card-body p-4 items-center text-center">
+                        <span class="text-3xl">♟️</span>
+                        <span class="text-sm font-medium">Chess</span>
+                    </div>
+                </div>
+                <div
+                    class="card bg-base-300 hover:bg-base-100 transition-colors cursor-pointer hover:scale-105 transform"
+                >
+                    <div class="card-body p-4 items-center text-center">
+                        <span class="text-3xl">🔐</span>
+                        <span class="text-sm font-medium">Cybersecurity</span>
+                    </div>
+                </div>
+                <div
+                    class="card bg-base-300 hover:bg-base-100 transition-colors cursor-pointer hover:scale-105 transform"
+                >
+                    <div class="card-body p-4 items-center text-center">
+                        <span class="text-3xl">💻</span>
+                        <span class="text-sm font-medium">Coding</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <Experience />
+    <Skills />
+    <Goals />
+    <Awards />
 </Layout>
+
+<script>
+    const canvas = document.getElementById("matrix-rain") as HTMLCanvasElement;
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const chars = "01";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+
+    const drops: number[] = [];
+    for (let i = 0; i < columns; i++) {
+        drops[i] = 1;
+    }
+
+    function drawMatrix() {
+        ctx!.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx!.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx!.fillStyle = "#22c55e";
+        ctx!.font = fontSize + "px monospace";
+
+        for (let i = 0; i < drops.length; i++) {
+            const char = chars[Math.floor(Math.random() * chars.length)];
+            ctx!.fillText(char, i * fontSize, drops[i] * fontSize);
+
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }
+
+    setInterval(drawMatrix, 50);
+
+    window.addEventListener("resize", () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    document.addEventListener("keydown", (e) => {
+        const target = e.target as HTMLElement | null;
+        if (
+            !target ||
+            target.tagName === "INPUT" ||
+            target.tagName === "TEXTAREA"
+        )
+            return;
+
+        const scrollAmount = window.innerHeight * 0.7;
+
+        switch (e.key) {
+            case "j":
+            case "ArrowDown":
+                window.scrollBy({ top: scrollAmount, behavior: "smooth" });
+                break;
+            case "k":
+            case "ArrowUp":
+                window.scrollBy({ top: -scrollAmount, behavior: "smooth" });
+                break;
+            case "G":
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: "smooth",
+                });
+                break;
+            case "g":
+                if (!e.shiftKey) {
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+                break;
+        }
+    });
+</script>
+
+<style is:global>
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in-up {
+        animation: fadeInUp 0.6s ease forwards;
+    }
+
+    #matrix-canvas {
+        animation: fadeIn 1s ease;
+    }
+</style>

@@ -1,6 +1,109 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+@theme {
+    --color-primary: #22c55e;
+    --color-secondary: #0ea5e9;
+    --color-accent: #f59e0b;
+}
+
+[data-theme="dark"] {
+    --p: 0 0% 7%;
+    --pf: 0 0% 12%;
+    --pc: 0 0% 98%;
+    --s: 142 71% 45%;
+    --sf: 142 71% 35%;
+    --sc: 0 0% 100%;
+    --a: 38 92% 50%;
+    --af: 38 92% 45%;
+    --ac: 0 0% 0%;
+    --n: 0 0% 10%;
+    --nf: 0 0% 6%;
+    --nc: 0 0% 95%;
+    --b1: 0 0% 5%;
+    --b2: 0 0% 8%;
+    --b3: 0 0% 12%;
+    --bc: 0 0% 95%;
+    --in: 198 93% 60%;
+    --su: 158 64% 52%;
+    --wa: 43 96% 56%;
+    --er: 0 91% 71%;
+    --rounded-box: 0.75rem;
+    --rounded-btn: 0.5rem;
+    --animation-btn: 0.25s;
+    --animation-input: .2s;
+    --btn-text-case: normal-case;
+    --btn-focus-scale: 0.98;
+    --border-btn: 1px;
+    --tab-border: 1px;
+    --tab-radius: 0.5rem;
+}
+
+[data-theme="light"] {
+    --p: 199 89% 48%;
+    --pf: 199 89% 40%;
+    --pc: 0 0% 100%;
+    --s: 142 71% 45%;
+    --sf: 142 71% 35%;
+    --sc: 0 0% 100%;
+    --a: 38 92% 50%;
+    --af: 38 92% 45%;
+    --ac: 0 0% 100%;
+    --n: 0 0% 15%;
+    --nf: 0 0% 10%;
+    --nc: 0 0% 98%;
+    --b1: 0 0% 100%;
+    --b2: 0 0% 96%;
+    --b3: 0 0% 92%;
+    --bc: 0 0% 15%;
+    --in: 198 93% 60%;
+    --su: 158 64% 52%;
+    --wa: 43 96% 56%;
+    --er: 0 91% 71%;
+    --rounded-box: 0.75rem;
+    --rounded-btn: 0.5rem;
+    --animation-btn: 0.25s;
+    --animation-input: .2s;
+    --btn-text-case: normal-case;
+    --btn-focus-scale: 0.98;
+    --border-btn: 1px;
+    --tab-border: 1px;
+    --tab-radius: 0.5rem;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
 h1 {
     @apply text-4xl font-bold;
 }
@@ -14,5 +117,41 @@ h3 {
 }
 
 h4 {
-    @apply text-2xl font-semibold;
+    @apply text-xl font-semibold;
+}
+
+.navbar {
+    backdrop-filter: blur(12px);
+}
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+}
+
+.badge {
+    transition: all 0.2s ease;
+}
+
+.badge:hover {
+    transform: scale(1.05);
+}
+
+.btn-circle {
+    transition: all 0.3s ease;
+}
+
+html {
+    animation: fadeIn 0.5s ease;
+}
+
+section {
+    animation: fadeIn 0.8s ease;
+}
+
+#hero {
+    animation: fadeIn 1s ease;
 }
