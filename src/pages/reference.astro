@@ -17,17 +17,65 @@ import {
 
 const bugBounties = additionalActivities.filter((a) => a.type === "bugbounty");
 const conferences = additionalActivities.filter((a) => a.type === "conference");
+const rolePriority: Record<string, number> = {
+    President: 1,
+    "Vice President": 2,
+    Treasurer: 3,
+    "Activities Manager": 4,
+    Secretary: 5,
+};
+const organizationPriority: Record<string, number> = {
+    "Cybersecurity Club": 1,
+    "Space & Astronomy Club": 2,
+    "Chess Club": 3,
+    "Anatomy Club": 4,
+};
+const getStartYear = (period?: string) =>
+    Number.parseInt(period?.split("-")[0] || "0", 10);
+const sortedClubPositions = [...clubPositions].sort((a, b) => {
+    const yearDiff = getStartYear(b.period) - getStartYear(a.period);
+    if (yearDiff !== 0) return yearDiff;
+
+    const orgDiff =
+        (organizationPriority[a.organization] ?? 99) -
+        (organizationPriority[b.organization] ?? 99);
+    if (orgDiff !== 0) return orgDiff;
+
+    const roleDiff =
+        (rolePriority[a.title] ?? 99) - (rolePriority[b.title] ?? 99);
+    if (roleDiff !== 0) return roleDiff;
+
+    return a.title.localeCompare(b.title);
+});
+const groupedClubPositions = sortedClubPositions.reduce(
+    (acc, position) => {
+        const year = position.period || "Other";
+        if (!acc[year]) acc[year] = [];
+        acc[year].push(position);
+        return acc;
+    },
+    {} as Record<string, typeof clubPositions>,
+);
+const orderedClubPositionYears = Object.keys(groupedClubPositions).sort(
+    (a, b) => getStartYear(b) - getStartYear(a),
+);
 
 const data = {
     education: profile,
     coursework,
-    experience: experience.map((e) => ({
-        title: e.title,
-        org: e.organization,
-        period: e.period,
-        details: e.description,
+    experience: experience
+        .map((e) => ({
+            title: e.title,
+            org: e.organization,
+            period: e.period,
+            details: e.description,
+            featured: Boolean(e.highlight),
+        }))
+        .sort((a, b) => Number(b.featured) - Number(a.featured)),
+    clubPositionsByYear: orderedClubPositionYears.map((year) => ({
+        year,
+        items: groupedClubPositions[year],
     })),
-    clubPositions,
     awards: awards.map((a) => ({
         title: a.title,
         year: a.year,
@@ -66,12 +114,15 @@ const data = {
         title: b.title,
         year: b.year,
     })),
-    conferences: conferences.map((c) => ({
-        title: c.title,
-        year: c.year,
-        details: c.description,
-        link: c.link || null,
-    })),
+    conferences: conferences
+        .map((c) => ({
+            title: c.title,
+            year: c.year,
+            details: c.description,
+            link: c.link || null,
+            featured: Boolean(c.highlight),
+        }))
+        .sort((a, b) => Number(b.featured) - Number(a.featured)),
     volunteering: volunteering.map((v) => ({
         title: v.title,
         year: v.year,
@@ -83,17 +134,20 @@ const data = {
 <Layout>
     <div class="pt-24 pb-12 px-4 max-w-4xl mx-auto">
         <h1 class="text-3xl font-bold text-primary font-mono mb-2">
-            <span class="animate-pulse">></span> ./reference.sh
+            <span class="dark-only"><span class="animate-pulse">></span> ./reference.sh</span>
+            <span class="light-only font-sans">Reference</span>
         </h1>
-        <p class="text-base-content/60 font-mono text-sm mb-8">
-            Quick lookup for all portfolio data
+        <p class="text-base-content/60 text-sm mb-8">
+            <span class="dark-only font-mono">Quick lookup for all portfolio data</span>
+            <span class="light-only">A quick reference for portfolio details and highlights.</span>
         </p>
 
         <div class="space-y-8">
             <section class="card bg-base-200">
                 <div class="card-body">
-                    <h2 class="card-title font-mono text-primary">
-                        [EDUCATION]
+                    <h2 class="card-title text-primary">
+                        <span class="dark-only font-mono">[EDUCATION]</span>
+                        <span class="light-only">Education</span>
                     </h2>
                     <div class="overflow-x-auto">
                         <table class="table table-zebra font-mono text-sm">
@@ -116,10 +170,19 @@ const data = {
                                     ></tr
                                 >
                                 <tr
+                                    ><td class="font-bold">SAT</td><td
+                                        >{data.education.sat}</td
+                                    ></tr
+                                >
+                                <tr
                                     ><td class="font-bold">Coursework</td><td
                                         >{
                                             data.coursework
-                                                .map((c) => c.name)
+                                                .map((c) =>
+                                                    c.description
+                                                        ? `${c.name} (${c.description})`
+                                                        : c.name,
+                                                )
                                                 .join(", ")
                                         }</td
                                     ></tr
@@ -132,8 +195,9 @@ const data = {
 
             <section class="card bg-base-200">
                 <div class="card-body">
-                    <h2 class="card-title font-mono text-primary">
-                        [EXPERIENCE]
+                    <h2 class="card-title text-primary">
+                        <span class="dark-only font-mono">[EXPERIENCE]</span>
+                        <span class="light-only">Experience</span>
                     </h2>
                     <div class="overflow-x-auto">
                         <table class="table table-zebra font-mono text-sm">
@@ -146,9 +210,12 @@ const data = {
                             <tbody>
                                 {
                                     data.experience.map((exp) => (
-                                        <tr>
+                                        <tr class={exp.featured ? "bg-primary/10" : ""}>
                                             <td class="font-bold">
                                                 {exp.title}
+                                                {exp.featured && (
+                                                    <span class="badge badge-accent badge-xs ml-2">Featured</span>
+                                                )}
                                             </td>
                                             <td>{exp.org}</td>
                                             <td>{exp.period}</td>
@@ -159,15 +226,25 @@ const data = {
                             </tbody>
                         </table>
                     </div>
-                    <div class="divider font-mono text-xs opacity-50">
-                        Other Positions
+                    <div class="divider text-xs opacity-50">
+                        <span class="dark-only font-mono">Other Positions</span>
+                        <span class="light-only">Other Positions</span>
                     </div>
-                    <div class="flex flex-wrap gap-2">
+                    <div class="space-y-3">
                         {
-                            data.clubPositions.map((pos) => (
-                                <span class="badge badge-outline font-mono">
-                                    {pos.title} | {pos.organization}
-                                </span>
+                            data.clubPositionsByYear.map((group) => (
+                                <div>
+                                    <p class="text-xs font-bold opacity-60 mb-2">
+                                        {group.year}
+                                    </p>
+                                    <div class="flex flex-wrap gap-2">
+                                        {group.items.map((pos) => (
+                                            <span class="badge badge-outline">
+                                                {pos.title} | {pos.organization}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
                             ))
                         }
                     </div>
@@ -176,7 +253,10 @@ const data = {
 
             <section class="card bg-base-200">
                 <div class="card-body">
-                    <h2 class="card-title font-mono text-primary">[AWARDS]</h2>
+                    <h2 class="card-title text-primary">
+                        <span class="dark-only font-mono">[AWARDS]</span>
+                        <span class="light-only">Awards</span>
+                    </h2>
                     <div class="overflow-x-auto">
                         <table class="table table-zebra font-mono text-sm">
                             <thead>
@@ -205,8 +285,9 @@ const data = {
 
             <section class="card bg-base-200">
                 <div class="card-body">
-                    <h2 class="card-title font-mono text-primary">
-                        [COMPETITIONS]
+                    <h2 class="card-title text-primary">
+                        <span class="dark-only font-mono">[COMPETITIONS]</span>
+                        <span class="light-only">Competitions</span>
                     </h2>
                     <div class="overflow-x-auto">
                         <table class="table table-zebra font-mono text-sm">
@@ -237,12 +318,16 @@ const data = {
 
             <section class="card bg-base-200">
                 <div class="card-body">
-                    <h2 class="card-title font-mono text-primary">[SKILLS]</h2>
+                    <h2 class="card-title text-primary">
+                        <span class="dark-only font-mono">[SKILLS]</span>
+                        <span class="light-only">Skills</span>
+                    </h2>
                     <div class="space-y-3">
                         <div>
-                            <span class="font-mono text-xs opacity-70"
-                                >Languages:</span
-                            >
+                            <span class="text-xs opacity-70">
+                                <span class="dark-only font-mono">Languages:</span>
+                                <span class="light-only">Languages:</span>
+                            </span>
                             <div class="flex flex-wrap gap-1 mt-1">
                                 {
                                     data.skills.languages.map((skill) => (
@@ -254,9 +339,10 @@ const data = {
                             </div>
                         </div>
                         <div>
-                            <span class="font-mono text-xs opacity-70"
-                                >Cybersecurity:</span
-                            >
+                            <span class="text-xs opacity-70">
+                                <span class="dark-only font-mono">Cybersecurity:</span>
+                                <span class="light-only">Cybersecurity:</span>
+                            </span>
                             <div class="flex flex-wrap gap-1 mt-1">
                                 {
                                     data.skills.cybersecurity.map((skill) => (
@@ -268,9 +354,10 @@ const data = {
                             </div>
                         </div>
                         <div>
-                            <span class="font-mono text-xs opacity-70"
-                                >Tools:</span
-                            >
+                            <span class="text-xs opacity-70">
+                                <span class="dark-only font-mono">Tools:</span>
+                                <span class="light-only">Tools:</span>
+                            </span>
                             <div class="flex flex-wrap gap-1 mt-1">
                                 {
                                     data.skills.tools.map((skill) => (
@@ -287,8 +374,9 @@ const data = {
 
             <section class="card bg-base-200">
                 <div class="card-body">
-                    <h2 class="card-title font-mono text-primary">
-                        [OUTSIDE COURSEWORK]
+                    <h2 class="card-title text-primary">
+                        <span class="dark-only font-mono">[OUTSIDE COURSEWORK]</span>
+                        <span class="light-only">Outside Coursework</span>
                     </h2>
                     <div class="overflow-x-auto">
                         <table class="table table-zebra font-mono text-sm">
@@ -334,8 +422,9 @@ const data = {
 
             <section class="card bg-base-200">
                 <div class="card-body">
-                    <h2 class="card-title font-mono text-primary">
-                        [BUG BOUNTIES]
+                    <h2 class="card-title text-primary">
+                        <span class="dark-only font-mono">[BUG BOUNTIES]</span>
+                        <span class="light-only">Bug Bounties</span>
                     </h2>
                     <div class="overflow-x-auto">
                         <table class="table table-zebra font-mono text-sm">
@@ -361,8 +450,9 @@ const data = {
 
             <section class="card bg-base-200">
                 <div class="card-body">
-                    <h2 class="card-title font-mono text-primary">
-                        [ADDITIONAL ACTIVITIES]
+                    <h2 class="card-title text-primary">
+                        <span class="dark-only font-mono">[ADDITIONAL ACTIVITIES]</span>
+                        <span class="light-only">Additional Activities</span>
                     </h2>
                     <div class="overflow-x-auto">
                         <table class="table table-zebra font-mono text-sm">
@@ -376,9 +466,12 @@ const data = {
                             <tbody>
                                 {
                                     data.conferences.map((item) => (
-                                        <tr>
+                                        <tr class={item.featured ? "bg-accent/10" : ""}>
                                             <td class="font-bold">
                                                 {item.title}
+                                                {item.featured && (
+                                                    <span class="badge badge-accent badge-xs ml-2">Featured</span>
+                                                )}
                                             </td>
                                             <td>{item.year}</td>
                                             <td>{item.details}</td>
@@ -409,8 +502,9 @@ const data = {
 
             <section class="card bg-base-200">
                 <div class="card-body">
-                    <h2 class="card-title font-mono text-primary">
-                        [VOLUNTEERING]
+                    <h2 class="card-title text-primary">
+                        <span class="dark-only font-mono">[VOLUNTEERING]</span>
+                        <span class="light-only">Volunteering</span>
                     </h2>
                     <div class="overflow-x-auto">
                         <table class="table table-zebra font-mono text-sm">
@@ -436,8 +530,11 @@ const data = {
 
             <section class="card bg-base-200">
                 <div class="card-body">
-                    <h2 class="card-title font-mono text-primary">[GOALS]</h2>
-                    <ul class="list-disc list-inside font-mono">
+                    <h2 class="card-title text-primary">
+                        <span class="dark-only font-mono">[GOALS]</span>
+                        <span class="light-only">Goals</span>
+                    </h2>
+                    <ul class="list-disc list-inside">
                         {data.goals.map((goal) => <li>{goal}</li>)}
                     </ul>
                 </div>

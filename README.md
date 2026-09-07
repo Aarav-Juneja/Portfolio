@@ -1,41 +1,26 @@
-# Astro Starter Kit: Basics
+# Aarav Juneja Portfolio
 
-## 🚀 Project Structure
+Personal portfolio site built with Astro, Tailwind CSS, and DaisyUI.
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## Pages
 
-Astro's [guide](https://docs.astro.build/en/basics/project-structure/) on project structure
+- `/` Homepage with featured highlights and overview sections
+- `/portfolio` Full portfolio breakdown
+- `/reference` Structured data-first reference view
+- `/blog` Blog archive and posts
 
-## 🧞 Commands
+## Development
 
-All commands are run from the root of the project, from a terminal:
+All commands run from the repository root:
 
-| Command           | Action                                           |
-| :---------------- | :----------------------------------------------- |
-| `bun install`     | Installs dependencies                            |
-| `bun dev`         | Starts local dev server at `localhost:4321`      |
-| `bun build`       | Build your production site to `./dist/`          |
-| `bun run preview` | Preview your build locally, before deploying     |
-| `bunx astro ...`  | Run CLI commands like `astro add`, `astro check` |
-| `bunx --help`     | Get help using the Astro CLI                     |
+| Command       | Action                                      |
+| :------------ | :------------------------------------------ |
+| `bun install` | Install dependencies                        |
+| `bun dev`     | Start local dev server at `localhost:4321` |
+| `bun build`   | Build the production site into `dist/`      |
+| `bun preview` | Preview the production build locally        |
 
-## 👀 Want to learn more?
+## Content Sources
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## TODO:
-
--   Redesign the full website
--   Follow ALL PWA reccomendations
--   Add service workers
--   Implement a CSP(meta tag)
+- Main portfolio content lives in `src/portfolio-data.ts`.
+- Homepage and reference/portfolio pages are designed to stay in sync with shared data.

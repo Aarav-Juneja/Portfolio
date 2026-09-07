@@ -3,8 +3,79 @@ import Layout from "~/layouts/Layout.astro";
 ---
 
 <Layout>
-    <div class="m-auto w-full flex flex-col items-center justify-center pt-10">
-        <h1>Oops! Page not found.</h1>
-        <button class="btn mt-10 btn-lg"><a href="/">Go Home?</a></button>
+    <div id="page-404" class="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+        <div id="sweep-overlay" class="absolute inset-0 z-10 pointer-events-none" style="width: 0%;"></div>
+        <div class="relative z-20 flex flex-col items-center gap-6 px-4">
+            <h1 class="text-6xl md:text-8xl font-bold font-mono opacity-80">404</h1>
+            <p class="text-xl md:text-2xl opacity-60">Page not found</p>
+            <div class="w-80 md:w-96 mt-8">
+                <input
+                    type="range"
+                    id="sweep-slider"
+                    min="0"
+                    max="100"
+                    value="0"
+                    class="w-full h-3 rounded-lg appearance-none cursor-pointer accent-primary"
+                />
+                <p class="text-sm opacity-50 mt-3 text-center font-mono">slide to go home →</p>
+            </div>
+        </div>
     </div>
+
+    <style is:global>
+        #sweep-overlay {
+            background-color: #e5e5e5;
+            transition: none;
+        }
+
+        html[data-theme="dark"] #sweep-overlay {
+            background-color: #1a1a1a;
+        }
+
+        #sweep-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(128, 128, 128, 0.3);
+        }
+
+        #sweep-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--p, #22c55e);
+            cursor: grab;
+            border: 3px solid white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        #sweep-slider::-webkit-slider-thumb:active {
+            cursor: grabbing;
+        }
+
+        #sweep-slider::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--p, #22c55e);
+            cursor: grab;
+            border: 3px solid white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+    </style>
+
+    <script is:inline>
+        const slider = document.getElementById("sweep-slider");
+        const overlay = document.getElementById("sweep-overlay");
+
+        slider.addEventListener("input", () => {
+            const val = slider.value;
+            overlay.style.width = val + "%";
+
+            if (parseInt(val) >= 100) {
+                window.location.href = "/";
+            }
+        });
+    </script>
 </Layout>

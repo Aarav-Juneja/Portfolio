@@ -155,3 +155,16 @@ section {
 #hero {
     animation: fadeIn 1s ease;
 }
+
+html[data-theme="dark"] .light-only,
+html[data-theme="light"] .dark-only {
+    display: none !important;
+}
+
+html[data-theme="light"] .hide-in-light {
+    display: none !important;
+}
+
+html[data-theme="dark"] .hide-in-dark {
+    display: none !important;
+}

@@ -1,0 +1,47 @@
+---
+import { additionalActivities, experience } from "~/portfolio-data";
+
+const featuredExperience = experience.find((item) => item.highlight);
+const featuredConference = additionalActivities.find(
+    (item) => item.type === "conference" && item.highlight,
+);
+---
+
+{
+    (featuredExperience || featuredConference) && (
+        <section id="highlights" class="py-20 px-4 bg-base-200/40">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="text-3xl font-bold mb-10 text-center">
+                    <span class="border-b-4 border-accent pb-2">Featured Highlights</span>
+                </h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    {featuredExperience && (
+                        <article class="card bg-base-300 shadow-2xl ring-2 ring-primary">
+                            <div class="card-body">
+                                <div class="flex items-center justify-between gap-3 flex-wrap">
+                                    <span class="badge badge-primary">Featured</span>
+                                    <span class="badge badge-outline">{featuredExperience.period}</span>
+                                </div>
+                                <h3 class="card-title text-xl mt-2">{featuredExperience.title}</h3>
+                                <p class="text-accent font-medium text-sm">{featuredExperience.organization}</p>
+                                <p class="text-base-content/75">{featuredExperience.description}</p>
+                            </div>
+                        </article>
+                    )}
+                    {featuredConference && (
+                        <article class="card bg-base-300 shadow-2xl ring-2 ring-accent">
+                            <div class="card-body">
+                                <div class="flex items-center justify-between gap-3 flex-wrap">
+                                    <span class="badge badge-accent">Featured</span>
+                                    <span class="badge badge-outline">{featuredConference.year}</span>
+                                </div>
+                                <h3 class="card-title text-xl mt-2">{featuredConference.title}</h3>
+                                <p class="text-base-content/75">{featuredConference.description}</p>
+                            </div>
+                        </article>
+                    )}
+                </div>
+            </div>
+        </section>
+    )
+}

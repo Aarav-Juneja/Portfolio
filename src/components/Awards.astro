@@ -1,5 +1,8 @@
 ---
-import { awards, competitions } from "~/portfolio-data";
+import { awards } from "~/portfolio-data";
+
+const { hiddenTitles = [] } = Astro.props;
+const visibleAwards = awards.filter((award) => !hiddenTitles.includes(award.title));
 ---
 
 <section id="awards" class="py-20 px-4">
@@ -9,7 +12,7 @@ import { awards, competitions } from "~/portfolio-data";
         </h2>
         
         <div class="grid md:grid-cols-2 gap-6">
-            {awards.map((award, index) => (
+            {visibleAwards.map((award, index) => (
                 <div class={`card bg-base-300 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group ${award.highlight ? 'ring-2 ring-primary' : ''}`}
                      style={`animation: fadeInUp 0.5s ease forwards ${index * 100}ms; opacity: 0;`}>
                     <div class="card-body">
@@ -28,21 +31,5 @@ import { awards, competitions } from "~/portfolio-data";
             ))}
         </div>
 
-        <div class="mt-12">
-            <h3 class="text-xl font-semibold mb-6 text-center">Competitions</h3>
-            <div class="flex flex-wrap justify-center gap-4">
-                {competitions.map((comp) => (
-                    <div class="badge badge-lg badge-outline hover:badge-accent transition-colors p-4 font-mono">
-                        <span class="font-semibold">{comp.name}</span>
-                        {comp.years && (
-                            <span class="ml-2 opacity-70">{comp.years.join(", ")}</span>
-                        )}
-                        {comp.year && (
-                            <span class="ml-2 opacity-70">{comp.year}</span>
-                        )}
-                    </div>
-                ))}
-            </div>
-        </div>
     </div>
 </section>

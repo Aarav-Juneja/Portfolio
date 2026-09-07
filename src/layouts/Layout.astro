@@ -47,11 +47,9 @@ const props: Props = Astro.props;
                 <div class="flex-1 ml-3">
                     <a href="/" class="font-semibold text-lg">Aarav Juneja</a>
                 </div>
-                <a href="/portfolio" class="btn btn-ghost btn-sm font-mono text-xs opacity-70 hover:opacity-100">
-                    [PORTFOLIO]
-                </a>
                 <a href="/reference" class="btn btn-ghost btn-sm font-mono text-xs opacity-70 hover:opacity-100">
-                    [REF]
+                    <span class="dark-only">[REF]</span>
+                    <span class="light-only font-medium">Reference</span>
                 </a>
                 <label class="swap swap-rotate btn btn-ghost btn-circle">
                     <input type="checkbox" id="theme-toggle" />

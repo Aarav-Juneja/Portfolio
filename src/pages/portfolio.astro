@@ -12,15 +12,70 @@ import {
     externalLinks,
     volunteering,
 } from "~/portfolio-data";
+
+const prioritizedExperience = [...experience].sort(
+    (a, b) => Number(Boolean(b.highlight)) - Number(Boolean(a.highlight)),
+);
+const prioritizedActivities = [...additionalActivities].sort(
+    (a, b) => Number(Boolean(b.highlight)) - Number(Boolean(a.highlight)),
+);
+const rolePriority: Record<string, number> = {
+    President: 1,
+    "Vice President": 2,
+    Treasurer: 3,
+    "Activities Manager": 4,
+    Secretary: 5,
+};
+const organizationPriority: Record<string, number> = {
+    "Cybersecurity Club": 1,
+    "Space & Astronomy Club": 2,
+    "Chess Club": 3,
+    "Anatomy Club": 4,
+};
+const getStartYear = (period?: string) =>
+    Number.parseInt(period?.split("-")[0] || "0", 10);
+const sortedClubPositions = [...clubPositions].sort((a, b) => {
+    const yearDiff = getStartYear(b.period) - getStartYear(a.period);
+    if (yearDiff !== 0) return yearDiff;
+
+    const orgDiff =
+        (organizationPriority[a.organization] ?? 99) -
+        (organizationPriority[b.organization] ?? 99);
+    if (orgDiff !== 0) return orgDiff;
+
+    const roleDiff =
+        (rolePriority[a.title] ?? 99) - (rolePriority[b.title] ?? 99);
+    if (roleDiff !== 0) return roleDiff;
+
+    return a.title.localeCompare(b.title);
+});
+const groupedClubPositions = sortedClubPositions.reduce(
+    (acc, position) => {
+        const year = position.period || "Other";
+        if (!acc[year]) acc[year] = [];
+        acc[year].push(position);
+        return acc;
+    },
+    {} as Record<string, typeof clubPositions>,
+);
+const orderedClubPositionYears = Object.keys(groupedClubPositions).sort(
+    (a, b) => getStartYear(b) - getStartYear(a),
+);
 ---
 
 <Layout>
     <div class="pt-24 pb-12 px-4 max-w-5xl mx-auto">
         <h1 class="text-4xl font-bold text-primary font-mono mb-2">
-            <span class="animate-pulse">></span> Portfolio
+            <span class="dark-only"><span class="animate-pulse">></span> Portfolio</span>
+            <span class="light-only font-sans">Portfolio</span>
         </h1>
-        <p class="text-base-content/60 font-mono text-sm mb-8">
-            Detailed overview of achievements, certifications, and activities
+        <p class="text-base-content/60 text-sm mb-8">
+            <span class="dark-only font-mono">
+                Detailed overview of achievements, certifications, and activities
+            </span>
+            <span class="light-only">
+                A detailed overview of achievements, certifications, and activities.
+            </span>
         </p>
 
         <div class="space-y-12">
@@ -36,7 +91,9 @@ import {
                                 href={link.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="btn btn-outline btn-primary hover:btn-accent"
+                                class={`btn btn-outline btn-primary hover:btn-accent ${
+                                    link.icon === "discord" ? "hide-in-light" : ""
+                                }`}
                             >
                                 <Icon
                                     name={
@@ -64,16 +121,21 @@ import {
                 </h2>
                 <div class="space-y-4">
                     {
-                        experience.map((exp) => (
-                            <div class="card bg-base-200">
+                        prioritizedExperience.map((exp) => (
+                            <div class={`card bg-base-200 ${exp.highlight ? "ring-2 ring-primary shadow-2xl" : ""}`}>
                                 <div class="card-body">
                                     <div class="flex justify-between items-start">
-                                        <h3 class="card-title text-base">
+                                        <h3 class={`card-title ${exp.highlight ? "text-xl" : "text-base"}`}>
                                             {exp.title}
                                         </h3>
-                                        <span class="badge badge-primary badge-outline">
-                                            {exp.period}
-                                        </span>
+                                        <div class="flex gap-2 items-center flex-wrap justify-end">
+                                            <span class="badge badge-primary badge-outline">
+                                                {exp.period}
+                                            </span>
+                                            {exp.highlight && (
+                                                <span class="badge badge-accent">Featured</span>
+                                            )}
+                                        </div>
                                     </div>
                                     <p class="text-accent text-sm">
                                         {exp.organization}
@@ -95,16 +157,21 @@ import {
                 </h2>
                 <div class="space-y-4">
                     {
-                        additionalActivities.map((activity) => (
-                            <div class="card bg-base-200">
+                        prioritizedActivities.map((activity) => (
+                            <div class={`card bg-base-200 ${activity.highlight ? "ring-2 ring-accent shadow-2xl" : ""}`}>
                                 <div class="card-body">
                                     <div class="flex justify-between items-start">
-                                        <h3 class="card-title text-base">
+                                        <h3 class={`card-title ${activity.highlight ? "text-xl" : "text-base"}`}>
                                             {activity.title}
                                         </h3>
-                                        <span class="badge badge-sm badge-outline">
-                                            {activity.year}
-                                        </span>
+                                        <div class="flex gap-2 items-center flex-wrap justify-end">
+                                            <span class="badge badge-sm badge-outline">
+                                                {activity.year}
+                                            </span>
+                                            {activity.highlight && (
+                                                <span class="badge badge-accent">Featured</span>
+                                            )}
+                                        </div>
                                     </div>
                                     <p class="text-base-content/70 text-sm mt-1">
                                         {activity.description}
@@ -131,15 +198,24 @@ import {
                 <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
                     <span class="text-primary">🏫</span> Club Positions
                 </h2>
-                <div class="grid md:grid-cols-3 gap-4">
+                <div class="space-y-6">
                     {
-                        clubPositions.map((pos) => (
-                            <div class="card bg-base-200">
-                                <div class="card-body items-center text-center p-4">
-                                    <h3 class="font-semibold">{pos.title}</h3>
-                                    <p class="text-sm text-base-content/70">
-                                        {pos.organization}
-                                    </p>
+                        orderedClubPositionYears.map((year) => (
+                            <div>
+                                <h3 class="text-lg font-semibold mb-3">{year}</h3>
+                                <div class="grid md:grid-cols-3 gap-4">
+                                    {groupedClubPositions[year].map((pos) => (
+                                        <div class="card bg-base-200">
+                                            <div class="card-body items-center text-center p-4">
+                                                <h4 class="font-semibold">
+                                                    {pos.title}
+                                                </h4>
+                                                <p class="text-sm text-base-content/70">
+                                                    {pos.organization}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         ))

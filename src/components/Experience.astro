@@ -1,5 +1,9 @@
 ---
-import { experience, clubPositions } from "~/portfolio-data";
+import { experience } from "~/portfolio-data";
+
+const prioritizedExperience = [...experience].sort(
+    (a, b) => Number(Boolean(b.highlight)) - Number(Boolean(a.highlight)),
+);
 ---
 
 <section id="experience" class="py-20 px-4">
@@ -12,13 +16,16 @@ import { experience, clubPositions } from "~/portfolio-data";
             <div class="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-primary opacity-30"></div>
             
             <div class="space-y-12">
-                {experience.map((exp, index) => (
+                {prioritizedExperience.map((exp, index) => (
                     <div class={`relative flex flex-col md:flex-row ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
                         <div class="md:w-1/2 pl-12 md:pl-0">
-                            <div class={`card bg-base-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 ${index % 2 === 0 ? 'md:mr-8' : 'md:ml-8'}`}>
+                            <div class={`card bg-base-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 ${index % 2 === 0 ? 'md:mr-8' : 'md:ml-8'} ${exp.highlight ? 'ring-2 ring-primary shadow-2xl' : ''}`}>
                                 <div class="card-body">
-                                    <div class="badge badge-primary badge-outline mb-2">{exp.period}</div>
-                                    <h3 class="card-title text-lg">{exp.title}</h3>
+                                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                                        <div class="badge badge-primary badge-outline">{exp.period}</div>
+                                        {exp.highlight && <div class="badge badge-accent">Featured</div>}
+                                    </div>
+                                    <h3 class={`card-title ${exp.highlight ? 'text-xl' : 'text-lg'}`}>{exp.title}</h3>
                                     <p class="text-accent text-sm">{exp.organization}</p>
                                     <p class="text-base-content/70 text-sm mt-2">{exp.description}</p>
                                 </div>
@@ -32,17 +39,5 @@ import { experience, clubPositions } from "~/portfolio-data";
             </div>
         </div>
 
-        <div class="mt-16">
-            <h3 class="text-xl font-semibold mb-6 text-center opacity-70">Other Club Positions</h3>
-            <div class="flex flex-wrap justify-center gap-3">
-                {clubPositions.map((pos) => (
-                    <div class="badge badge-lg badge-outline p-4 font-mono">
-                        <span class="text-primary">{pos.title}</span>
-                        <span class="mx-2 opacity-50">|</span>
-                        <span>{pos.organization}</span>
-                    </div>
-                ))}
-            </div>
-        </div>
     </div>
 </section>

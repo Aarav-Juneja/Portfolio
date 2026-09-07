@@ -1,10 +1,11 @@
 ---
 import Layout from "~/layouts/Layout.astro";
 import { Image } from "astro:assets";
-import Experience from "~/components/Experience.astro";
 import Skills from "~/components/Skills.astro";
 import Awards from "~/components/Awards.astro";
 import Goals from "~/components/Goals.astro";
+import Highlights from "~/components/Highlights.astro";
+import { profile } from "~/portfolio-data";
 import photo from "~/assets/images/photo.jpeg";
 ---
 
@@ -17,27 +18,7 @@ import photo from "~/assets/images/photo.jpeg";
         id="hero"
         class="min-h-screen flex items-center justify-center pt-16 relative"
     >
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div
-                class="absolute top-20 left-10 w-2 h-2 bg-primary rounded-full animate-ping"
-            >
-            </div>
-            <div
-                class="absolute top-40 right-20 w-2 h-2 bg-accent rounded-full animate-ping"
-                style="animation-delay: 0.5s;"
-            >
-            </div>
-            <div
-                class="absolute bottom-40 left-1/4 w-2 h-2 bg-primary rounded-full animate-ping"
-                style="animation-delay: 1s;"
-            >
-            </div>
-            <div
-                class="absolute top-1/2 right-1/3 w-2 h-2 bg-accent rounded-full animate-ping"
-                style="animation-delay: 1.5s;"
-            >
-            </div>
-        </div>
+
 
         <div
             class="relative z-10 flex flex-col md:flex-row items-center gap-12 px-4 max-w-6xl"
@@ -57,6 +38,8 @@ import photo from "~/assets/images/photo.jpeg";
                     class="relative rounded-full w-48 h-48 md:w-64 md:h-64 object-cover ring-4 ring-base-300 shadow-2xl"
                     width={256}
                     height={256}
+                    loading="eager"
+                    fetchpriority="high"
                 />
             </div>
 
@@ -64,19 +47,22 @@ import photo from "~/assets/images/photo.jpeg";
                 class="text-center md:text-left space-y-4"
                 style="animation: fadeInUp 0.8s ease 0.2s forwards; opacity: 0;"
             >
-                <div class="font-mono text-sm text-primary opacity-80">
+                <div class="font-mono text-sm text-primary opacity-80 dark-only">
                     <span class="animate-pulse">$</span> whoami
+                </div>
+                <div class="text-sm text-primary/80 light-only font-semibold tracking-[0.18em] uppercase">
+                    Student • Builder • Security Enthusiast
                 </div>
                 <h1
                     class="text-4xl md:text-6xl font-bold text-primary font-mono"
                 >
-                    Aarav Juneja<span class="animate-pulse">_</span>
+                    Aarav Juneja<span class="animate-pulse dark-only">_</span>
                 </h1>
                 <p class="text-xl md:text-2xl text-base-content/80 font-medium">
-                    High School Sophomore @ Amador Valley High
+                    High School Student @ Amador Valley High
                 </p>
-                <p class="text-lg text-base-content/60 font-mono">
-                    > GPA: 4.0 | Class of 2028
+                <p class="text-lg text-base-content/60">
+                    <span class="dark-only font-mono">&gt; </span>GPA {profile.gpa} • SAT {profile.sat} • Class of {profile.graduation}
                 </p>
 
                 <div
@@ -95,7 +81,7 @@ import photo from "~/assets/images/photo.jpeg";
                         href="https://linkedin.com/in/aarav-juneja"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="btn btn-primary btn-circle hover:scale-110 transition-transform"
+                        class="btn btn-primary btn-circle hover:scale-110 transition-transform hide-in-dark"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +98,7 @@ import photo from "~/assets/images/photo.jpeg";
                         href="https://discord.com/users/1042177742331981945"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="btn btn-accent btn-circle hover:scale-110 transition-transform"
+                        class="btn btn-accent btn-circle hover:scale-110 transition-transform hide-in-light"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -126,7 +112,7 @@ import photo from "~/assets/images/photo.jpeg";
                         >
                     </a>
                     <a
-                        href="mailto:foraaravj@gmail.com"
+                        href="mailto:aarav@aaravjuneja.com"
                         class="btn btn-outline btn-circle hover:scale-110 transition-transform"
                     >
                         <svg
@@ -169,21 +155,24 @@ import photo from "~/assets/images/photo.jpeg";
 
     <section id="about" class="py-20 px-4 bg-base-200/30 relative z-10">
         <div class="max-w-3xl mx-auto text-center">
-            <div class="font-mono text-sm text-primary mb-4 opacity-80">
+            <div class="font-mono text-sm text-primary mb-4 opacity-80 dark-only">
                 <span>> cat about.txt</span>
+            </div>
+            <div class="text-sm text-primary/80 mb-4 light-only font-semibold tracking-[0.18em] uppercase">
+                About
             </div>
             <h2 class="text-3xl font-bold mb-8">
                 <span class="border-b-4 border-primary pb-2">About Me</span>
             </h2>
             <div class="prose prose-lg mx-auto">
-                <p class="text-lg leading-relaxed font-mono">
+                <p class="text-lg leading-relaxed font-mono dark-only">
                     <span class="text-primary">const</span> passion = [<span
                         class="text-accent">"cybersecurity"</span
                     >, <span class="text-accent">"building things"</span>];
                 </p>
                 <p class="text-lg leading-relaxed mt-4">
                     I'm a <span class="text-primary font-semibold"
-                        >sophomore</span
+                        >junior</span
                     > at Amador Valley High School with a deep passion for
                     <span class="text-accent font-semibold">cybersecurity</span> and
                     <span class="text-primary font-semibold"
@@ -193,7 +182,7 @@ import photo from "~/assets/images/photo.jpeg";
                     actually use.
                 </p>
                 <p class="text-lg leading-relaxed mt-4">
-                    When I'm not coding, you'll find me competing in chess,
+                    When I'm not coding, you'll find me playing in chess,
                     tinkering with new technologies, or exploring the latest in
                     security research.
                 </p>
@@ -227,87 +216,84 @@ import photo from "~/assets/images/photo.jpeg";
             </div>
         </div>
     </section>
+    <Highlights />
 
-    <Experience />
+    <div class="dark-only">
+        <Awards hiddenTitles={["Science Bowl - 3rd Place"]} />
+    </div>
+    <div class="light-only">
+        <Awards hiddenTitles={["Science Bowl - 3rd Place"]} />
+    </div>
     <Skills />
     <Goals />
-    <Awards />
 </Layout>
 
 <script>
     const canvas = document.getElementById("matrix-rain") as HTMLCanvasElement;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas?.getContext("2d");
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const chars = "01";
-    const fontSize = 14;
-    const columns = canvas.width / fontSize;
-
-    const drops: number[] = [];
-    for (let i = 0; i < columns; i++) {
-        drops[i] = 1;
+    function isLightTheme() {
+        return document.documentElement.getAttribute("data-theme") === "light";
     }
 
-    function drawMatrix() {
-        ctx!.fillStyle = "rgba(0, 0, 0, 0.05)";
-        ctx!.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx!.fillStyle = "#22c55e";
-        ctx!.font = fontSize + "px monospace";
-
-        for (let i = 0; i < drops.length; i++) {
-            const char = chars[Math.floor(Math.random() * chars.length)];
-            ctx!.fillText(char, i * fontSize, drops[i] * fontSize);
-
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                drops[i] = 0;
-            }
-            drops[i]++;
-        }
+    function updateMatrixVisibility() {
+        if (!canvas) return;
+        canvas.style.display = isLightTheme() ? "none" : "block";
     }
 
-    setInterval(drawMatrix, 50);
+    updateMatrixVisibility();
+    const themeObserver = new MutationObserver(updateMatrixVisibility);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
+    });
 
-    window.addEventListener("resize", () => {
+    if (!canvas || !ctx) {
+        document.documentElement.classList.add("no-matrix");
+    } else {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-    });
 
-    document.addEventListener("keydown", (e) => {
-        const target = e.target as HTMLElement | null;
-        if (
-            !target ||
-            target.tagName === "INPUT" ||
-            target.tagName === "TEXTAREA"
-        )
-            return;
+        const chars = "01";
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
 
-        const scrollAmount = window.innerHeight * 0.7;
-
-        switch (e.key) {
-            case "j":
-            case "ArrowDown":
-                window.scrollBy({ top: scrollAmount, behavior: "smooth" });
-                break;
-            case "k":
-            case "ArrowUp":
-                window.scrollBy({ top: -scrollAmount, behavior: "smooth" });
-                break;
-            case "G":
-                window.scrollTo({
-                    top: document.body.scrollHeight,
-                    behavior: "smooth",
-                });
-                break;
-            case "g":
-                if (!e.shiftKey) {
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                }
-                break;
+        const drops: number[] = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.floor(Math.random() * (canvas.height / fontSize));
         }
-    });
+
+        function drawMatrix() {
+            if (isLightTheme()) return;
+
+            ctx!.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx!.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx!.fillStyle = "#22c55e";
+            ctx!.font = fontSize + "px monospace";
+
+            for (let i = 0; i < drops.length; i++) {
+                const char = chars[Math.floor(Math.random() * chars.length)];
+                ctx!.fillText(char, i * fontSize, drops[i] * fontSize);
+
+                if (
+                    drops[i] * fontSize > canvas.height &&
+                    Math.random() > 0.975
+                ) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 50);
+
+        window.addEventListener("resize", () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    }
+
 </script>
 
 <style is:global>
