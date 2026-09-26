@@ -1,0 +1,373 @@
+---
+import "@fontsource-variable/manrope";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
+import "~/styles/concept2.css";
+import {
+    additionalActivities,
+    awards,
+    experience,
+    clubPositions,
+} from "~/portfolio-data";
+
+const findAward = (needle: string) =>
+    awards.find((item) => item.title.includes(needle));
+const findActivity = (needle: string) =>
+    additionalActivities.find((item) => item.title.includes(needle));
+const findExperience = (needle: string) =>
+    experience.find((item) => item.title.includes(needle));
+
+const modules = [
+    {
+        id: "security",
+        tag: "MODULE 01",
+        title: "Security research",
+        stat: "DEF CON 34 speaker",
+        description:
+            findActivity("DEF CON")?.description ??
+            "Vulnerability research and responsible disclosure.",
+        chips: ["Browser exploitation", "Binary exploitation", "Bug bounty"],
+    },
+    {
+        id: "robotics",
+        tag: "MODULE 02",
+        title: "Robotics",
+        stat: "Robosub semifinalist",
+        description:
+            findExperience("Robosub")?.description ??
+            "Autonomous underwater vehicle systems with AVBotz.",
+        chips: ["ROS 2", "Zephyr RTOS", "Behavior trees"],
+    },
+    {
+        id: "competitive",
+        tag: "MODULE 03",
+        title: "Competitive programming",
+        stat: "Lockheed Martin CodeQuest — 1st",
+        description:
+            findAward("CodeQuest")?.description ??
+            "Algorithms and data structures under contest pressure.",
+        chips: ["USACO Silver", "Stanford ProCo 3rd", "9 contests"],
+    },
+    {
+        id: "leadership",
+        tag: "MODULE 04",
+        title: "Club leadership",
+        stat: `${clubPositions.length} officer roles`,
+        description:
+            "Leading the Cybersecurity Club and holding officer positions across Chess, Space & Astronomy, and Anatomy clubs.",
+        chips: ["Cybersecurity Club — President", "Space & Astronomy", "Chess"],
+    },
+];
+
+const missionLog = [
+    {
+        year: "2026",
+        title: "DEF CON 34 — AppSec Village speaker",
+        detail: 'Presented "Man-in-the-Browser: Hijacking JavaScript APIs for Browser Persistence and Credential Theft."',
+    },
+    {
+        year: "2026",
+        title: "Robosub — AVBotz semifinalist",
+        detail: "Beat UC Berkeley and Georgia Tech with an autonomous underwater vehicle.",
+    },
+    {
+        year: "2026",
+        title: "LITCTF — Pwn writeup winner",
+        detail: "Won the writeup category for binary exploitation.",
+    },
+    {
+        year: "2026",
+        title: "Lockheed Martin CodeQuest — 1st place",
+        detail: "Advanced division, Sunnyvale.",
+    },
+    {
+        year: "2025",
+        title: "Lockheed Martin CyberQuest — 1st place",
+        detail: "Virtual division, cybersecurity challenges.",
+    },
+    {
+        year: "2025",
+        title: "PicoCTF — top 1%",
+        detail: "Ranked in the top 1% of all contestants.",
+    },
+    {
+        year: "2025",
+        title: "Black Hat — student scholarship",
+        detail: "Attended Black Hat 2025 on a student scholarship.",
+    },
+    {
+        year: "2026",
+        title: "US Cyber Challenge Camp — invited",
+        detail: "Top 50 ranking in the 2026 Winter CyberQuest.",
+    },
+];
+
+const RAD = Math.PI / 180;
+const radarBlips = [
+    {
+        id: "security",
+        angle: -90,
+        label: "Security",
+        detail: "DEF CON 34 speaker · LITCTF Pwn winner · CyberQuest champion",
+    },
+    {
+        id: "robotics",
+        angle: -18,
+        label: "Robotics",
+        detail: "Robosub 2026 semifinalist · AVBotz · ROS 2 + Zephyr RTOS",
+    },
+    {
+        id: "competitive",
+        angle: 54,
+        label: "Contests",
+        detail: "USACO Silver · Stanford ProCo 3rd · Lockheed Martin CodeQuest 1st",
+    },
+    {
+        id: "leadership",
+        angle: 126,
+        label: "Leadership",
+        detail: "President, Cybersecurity Club · officer across 4 clubs",
+    },
+    {
+        id: "space",
+        angle: 198,
+        label: "Space & chess",
+        detail: "Space & Astronomy Club VP · Chess Club Treasurer",
+    },
+].map((blip) => ({
+    ...blip,
+    x: 50 + 39 * Math.cos(blip.angle * RAD),
+    y: 50 + 39 * Math.sin(blip.angle * RAD),
+}));
+---
+
+<!doctype html>
+<html lang="en" class="c2-html">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="generator" content={Astro.generator} />
+        <meta
+            name="description"
+            content="Aarav Juneja — security research, robotics, and competitive systems."
+        />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <title>Aarav Juneja — Mission control</title>
+    </head>
+    <body class="c2-page">
+        <a class="c2-skip" href="#c2-modules">Skip to modules</a>
+
+        <div class="c2-hud-overlay" aria-hidden="true"></div>
+
+        <header class="c2-header">
+            <a class="c2-wordmark" href="/concept2" aria-label="Aarav Juneja, mission control home">
+                <span class="c2-wordmark-tick" aria-hidden="true"></span>
+                Aarav Juneja
+            </a>
+            <nav aria-label="Primary navigation">
+                <a href="#c2-modules">Modules</a>
+                <a href="#c2-log">Log</a>
+                <a href="/reference">Reference</a>
+                <a href="mailto:aarav@aaravjuneja.com">Contact</a>
+            </nav>
+            <div class="c2-clock" data-c2-clock aria-live="off">
+                <span class="c2-clock-dot" aria-hidden="true"></span>
+                <span data-c2-clock-text>00:00:00 UTC</span>
+            </div>
+        </header>
+
+        <main>
+            <section class="c2-hero" aria-labelledby="c2-title">
+                <div class="c2-hero-copy">
+                    <p class="c2-eyebrow">Security · robotics · competitive systems</p>
+                    <h1 id="c2-title">
+                        Aarav Juneja<span class="c2-cursor" aria-hidden="true">_</span>
+                    </h1>
+                    <p class="c2-deck">
+                        I break systems to understand them, then rebuild them
+                        underwater, on a board, and under contest clocks.
+                        DEF CON 34 speaker and Robosub semifinalist.
+                    </p>
+                    <div class="c2-actions">
+                        <a class="c2-action-primary" href="#c2-modules">
+                            View all modules
+                            <svg viewBox="0 0 18 18" aria-hidden="true">
+                                <path d="M4 14 14 4M7 4h7v7" />
+                            </svg>
+                        </a>
+                        <a class="c2-action-secondary" href="#c2-log">Mission log</a>
+                    </div>
+                    <dl class="c2-stat-row">
+                        <div>
+                            <dt>Signals tracked</dt>
+                            <dd>{radarBlips.length}</dd>
+                        </div>
+                        <div>
+                            <dt>Club roles</dt>
+                            <dd>{clubPositions.length}</dd>
+                        </div>
+                        <div>
+                            <dt>Log entries</dt>
+                            <dd>{missionLog.length}</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <div class="c2-radar-wrap">
+                    <div class="c2-radar" data-c2-radar>
+                        <div class="c2-radar-ring c2-radar-ring--3"></div>
+                        <div class="c2-radar-ring c2-radar-ring--2"></div>
+                        <div class="c2-radar-ring c2-radar-ring--1"></div>
+                        <div class="c2-radar-sweep" aria-hidden="true"></div>
+                        <div class="c2-radar-crosshair" aria-hidden="true">
+                            <span></span><span></span>
+                        </div>
+                        <div class="c2-radar-core">
+                            <span>AJ</span>
+                        </div>
+                        {
+                            radarBlips.map((blip) => (
+                                <button
+                                    class="c2-blip"
+                                    type="button"
+                                    data-c2-blip={blip.id}
+                                    aria-pressed="false"
+                                    style={`--x:${blip.x}%; --y:${blip.y}%`}
+                                >
+                                    <span class="c2-blip-dot" aria-hidden="true" />
+                                    <span class="c2-blip-label">{blip.label}</span>
+                                </button>
+                            ))
+                        }
+                    </div>
+                    <div class="c2-radar-readout">
+                        <span class="c2-radar-readout-marker" aria-hidden="true"></span>
+                        <p data-c2-readout role="status" aria-live="polite">
+                            Select a signal to inspect it.
+                        </p>
+                    </div>
+                    {
+                        radarBlips.map((blip) => (
+                            <template data-c2-detail={blip.id}>{blip.detail}</template>
+                        ))
+                    }
+                </div>
+            </section>
+
+            <section id="c2-modules" class="c2-modules" aria-labelledby="c2-modules-title">
+                <div class="c2-section-head">
+                    <span class="c2-section-eyebrow">// interests, expanded</span>
+                    <h2 id="c2-modules-title">Modules</h2>
+                </div>
+                <div class="c2-module-grid">
+                    {
+                        modules.map((mod) => (
+                            <article class="c2-module" id={mod.id}>
+                                <span class="c2-module-tag">{mod.tag}</span>
+                                <h3>{mod.title}</h3>
+                                <p class="c2-module-stat">{mod.stat}</p>
+                                <p class="c2-module-desc">{mod.description}</p>
+                                <ul class="c2-module-chips">
+                                    {mod.chips.map((chip) => (
+                                        <li>{chip}</li>
+                                    ))}
+                                </ul>
+                            </article>
+                        ))
+                    }
+                </div>
+            </section>
+
+            <section id="c2-log" class="c2-log" aria-labelledby="c2-log-title">
+                <div class="c2-section-head">
+                    <span class="c2-section-eyebrow">// chronological record</span>
+                    <h2 id="c2-log-title">Mission log</h2>
+                </div>
+                <ol class="c2-log-list">
+                    {
+                        missionLog.map((entry) => (
+                            <li class="c2-log-entry">
+                                <span class="c2-log-year">{entry.year}</span>
+                                <span class="c2-log-body">
+                                    <strong>{entry.title}</strong>
+                                    <span>{entry.detail}</span>
+                                </span>
+                            </li>
+                        ))
+                    }
+                </ol>
+            </section>
+        </main>
+
+        <footer class="c2-footer">
+            <span>Aarav Juneja</span>
+            <span>Systems, underwater, and over the board.</span>
+            <a href="mailto:aarav@aaravjuneja.com">aarav@aaravjuneja.com</a>
+        </footer>
+
+        <script>
+            const clockText = document.querySelector<HTMLElement>("[data-c2-clock-text]");
+            if (clockText) {
+                const format = (d: Date) =>
+                    `${d.getUTCHours().toString().padStart(2, "0")}:${d
+                        .getUTCMinutes()
+                        .toString()
+                        .padStart(2, "0")}:${d.getUTCSeconds().toString().padStart(2, "0")} UTC`;
+                const tick = () => {
+                    clockText.textContent = format(new Date());
+                };
+                tick();
+                window.setInterval(tick, 1000);
+            }
+
+            const radar = document.querySelector<HTMLElement>("[data-c2-radar]");
+            const readout = document.querySelector<HTMLElement>("[data-c2-readout]");
+            if (radar && readout) {
+                const blips = Array.from(
+                    radar.querySelectorAll<HTMLButtonElement>("[data-c2-blip]"),
+                );
+                const details = new Map<string, string>();
+                document
+                    .querySelectorAll<HTMLTemplateElement>("[data-c2-detail]")
+                    .forEach((tpl) => {
+                        const id = tpl.getAttribute("data-c2-detail");
+                        if (id) details.set(id, tpl.textContent?.trim() ?? "");
+                    });
+
+                let locked: string | null = null;
+
+                const setReadout = (id: string | null) => {
+                    readout.textContent = id
+                        ? (details.get(id) ?? "")
+                        : "Select a signal to inspect it.";
+                };
+
+                blips.forEach((blip) => {
+                    const id = blip.getAttribute("data-c2-blip");
+                    if (!id) return;
+
+                    blip.addEventListener("mouseenter", () => {
+                        if (!locked) setReadout(id);
+                    });
+                    blip.addEventListener("mouseleave", () => {
+                        if (!locked) setReadout(null);
+                    });
+                    blip.addEventListener("focus", () => {
+                        if (!locked) setReadout(id);
+                    });
+                    blip.addEventListener("click", () => {
+                        const isSame = locked === id;
+                        locked = isSame ? null : id;
+                        blips.forEach((b) =>
+                            b.setAttribute(
+                                "aria-pressed",
+                                String(b === blip && !isSame),
+                            ),
+                        );
+                        setReadout(locked);
+                    });
+                });
+            }
+        </script>
+    </body>
+</html>
