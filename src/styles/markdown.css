@@ -1,13 +1,97 @@
-@import "tailwindcss";
-
-h1 {
-    @apply text-3xl pb-5;
+/* Rendered Markdown inside a blog post. */
+.post-body {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    overflow-wrap: break-word;
 }
-
-h2 {
-    @apply text-2xl leading-17 mt-2;
+.post-body > * + * {
+    margin-top: 1.25em;
 }
-
-h3 {
-    @apply text-xl leading-10;
+.post-body > :is(h2, h3, h4) {
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    scroll-margin-top: 5rem;
+}
+.post-body > h2 {
+    margin-top: 2.25em;
+    font-size: 1.75rem;
+}
+.post-body > h3 {
+    margin-top: 1.75em;
+    font-size: 1.3rem;
+}
+.post-body > h4 {
+    margin-top: 1.5em;
+    font-size: 1.1rem;
+}
+.post-body > :is(h2, h3, h4) + * {
+    margin-top: 0.6em;
+}
+.post-body a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+html[data-theme="dark"] .post-body a {
+    color: var(--color-info);
+}
+.post-body :is(ul, ol) {
+    padding-left: 1.5rem;
+}
+.post-body ul {
+    list-style: disc;
+}
+.post-body ol {
+    list-style: decimal;
+}
+.post-body li + li {
+    margin-top: 0.4em;
+}
+.post-body blockquote {
+    padding-left: 1.25rem;
+    border-left: 2px solid var(--color-primary);
+    color: color-mix(in oklab, var(--color-base-content) 75%, transparent);
+}
+.post-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+}
+.post-body hr {
+    margin-block: 2.5em;
+    border-color: color-mix(in oklab, var(--color-base-content) 15%, transparent);
+}
+.post-body table {
+    display: block;
+    overflow-x: auto;
+    font-size: 0.95rem;
+}
+.post-body :is(th, td) {
+    padding: 0.5rem 0.9rem;
+    border-bottom: 1px solid color-mix(in oklab, var(--color-base-content) 15%, transparent);
+    text-align: left;
+}
+.post-body :not(pre) > code {
+    padding: 0.15em 0.35em;
+    border-radius: 0.3rem;
+    background: var(--color-base-200);
+    font-size: 0.9em;
+}
+.post-body pre {
+    padding: 1rem 1.25rem;
+    border: 1px solid color-mix(in oklab, var(--color-base-content) 12%, transparent);
+    border-radius: 0.75rem;
+    overflow-x: auto;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+html[data-theme="light"] .astro-code,
+html[data-theme="light"] .astro-code span {
+    color: var(--shiki-light);
+    background-color: var(--shiki-light-bg);
+}
+html[data-theme="dark"] .astro-code,
+html[data-theme="dark"] .astro-code span {
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg);
 }

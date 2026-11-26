@@ -1,24 +1,290 @@
 ---
-import { getCollection } from "astro:content";
+import DevText from "~/components/DevText.astro";
+import PostDate from "~/components/PostDate.astro";
+import PostTags from "~/components/PostTags.astro";
 import Layout from "~/layouts/Layout.astro";
-import { urlSafeTransform } from "~/utils";
+import { getPosts, postSlug, postUrl, tagUrl } from "~/blog";
 
-const posts = await getCollection("blog");
+const posts = await getPosts();
+
+const counts = new Map<string, number>();
+for (const tag of posts.flatMap((p) => p.data.tags)) counts.set(tag, (counts.get(tag) ?? 0) + 1);
+// Most used first, then alphabetical.
+const tags = [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+const chips = [{ tag: "", label: "all", count: posts.length, href: "/blog/" }].concat(
+    tags.map(([tag, count]) => ({ tag, label: tag, count, href: tagUrl(tag) })),
+);
 ---
 
-<Layout>
-    <div class="w-full flex flex-col pt-16 px-4 mb-auto">
-        <h2>Post Archive:</h2>
-        <ul class="pl-2">
+<Layout
+    title="Blog | Aarav Juneja"
+    description="Aarav Juneja's blog: explanations of things he's learning, and project write-ups."
+>
+    <div id="blog" class="max-w-4xl mx-auto px-4 pt-28 pb-24">
+        <h1 class="text-4xl md:text-5xl font-bold tracking-tight">
+            <span class="light-only">Blog</span>
+            <span class="dark-only font-mono text-3xl md:text-4xl"><span class="opacity-50">$</span> git log</span>
+        </h1>
+        <p class="mt-4 text-lg text-base-content/70">
+            Explaining things while I'm still learning them, plus project write-ups.
+        </p>
+
+        <form id="blog-filters" role="search" class="js-only mt-10">
+            <label class="flex items-center gap-3 rounded-lg border border-base-content/20 bg-base-200/60 px-4 focus-within:border-primary focus-within:outline-2 focus-within:outline-primary">
+                <span class="sr-only">Search posts</span>
+                <svg class="light-only h-5 w-5 shrink-0 text-base-content/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+                <span class="dark-only shrink-0 font-mono text-sm text-base-content/60" aria-hidden="true">$ grep -i</span>
+                <input
+                    id="blog-search"
+                    type="search"
+                    autocomplete="off"
+                    placeholder="Search posts"
+                    class="peer min-w-0 flex-1 bg-transparent py-3 text-base outline-none placeholder:text-base-content/60"
+                />
+                <kbd class="dark-only hidden sm:inline peer-focus:opacity-0 peer-[:not(:placeholder-shown)]:opacity-0 font-mono text-xs text-base-content/60" aria-hidden="true">press / to search</kbd>
+            </label>
             {
-                posts.map(post => (
-                    <li class="btn my-2">
-                        <a href={"/blog/" + urlSafeTransform(post.data.title)}>
-                            {post.data.title}
-                        </a>
+                tags.length > 0 && (
+                    <ul class="mt-4 flex flex-wrap gap-2" aria-label="Filter by tag">
+                        {chips.map((c) => (
+                            <li>
+                                <a href={c.href} data-tag={c.tag} data-chip aria-current={c.tag === "" ? "true" : undefined} class="chip">
+                                    {c.label} <span class="chip-count">{c.count}</span>
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                )
+            }
+        </form>
+
+        <p id="blog-status" role="status" class="js-only mt-8 text-sm text-base-content/70"></p>
+
+        <ol id="blog-posts" class="mt-4 border-t border-base-content/10">
+            {
+                posts.map((post) => (
+                    <li
+                        data-post={postSlug(post)}
+                        data-tags={JSON.stringify(post.data.tags)}
+                        data-meta={[post.data.title, post.data.description, ...post.data.tags].join(" ").toLowerCase()}
+                        class="grid gap-x-8 gap-y-1 border-b border-base-content/10 py-7 sm:grid-cols-[10rem_1fr]"
+                    >
+                        <div class="sm:pt-1.5"><PostDate date={post.data.publishDate} /></div>
+                        <div class="min-w-0">
+                            <h2 class="text-2xl font-semibold leading-snug break-words">
+                                <a href={postUrl(post)} class="hover:text-primary hover:underline underline-offset-4 decoration-2">{post.data.title}</a>
+                            </h2>
+                            {post.data.description && (
+                                <p class="mt-1 text-base-content/70 leading-relaxed"><DevText text={post.data.description} /></p>
+                            )}
+                            <p data-snippet hidden class="mt-2 border-l-2 border-primary pl-3 text-sm text-base-content/70 break-words"></p>
+                            <div class="mt-2"><PostTags tags={post.data.tags} /></div>
+                        </div>
                     </li>
                 ))
             }
-        </ul>
+        </ol>
+
+        <button id="blog-clear" type="button" hidden class="btn btn-sm btn-outline mt-6">Clear search and tag</button>
     </div>
 </Layout>
+
+<style is:global>
+    html:not(.js) #blog .js-only {
+        display: none;
+    }
+    #blog [hidden] {
+        display: none;
+    }
+    #blog .chip {
+        display: inline-block;
+        padding: 0.4rem 0.8rem;
+        border: 1px solid color-mix(in oklab, var(--color-base-content) 20%, transparent);
+        border-radius: 999px;
+        font-size: 0.875rem;
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease;
+    }
+    #blog .chip:hover {
+        border-color: var(--color-base-content);
+    }
+    #blog .chip-count {
+        opacity: 0.7;
+        font-variant-numeric: tabular-nums;
+    }
+    #blog .chip[aria-current="true"] {
+        border-color: var(--color-base-content);
+        background: var(--color-base-content);
+        color: var(--color-base-100);
+    }
+    html[data-theme="dark"] #blog .chip {
+        border-radius: 0.25rem;
+        font-family: var(--font-mono);
+    }
+    html[data-theme="dark"] #blog-search {
+        font-family: var(--font-mono);
+    }
+    #blog mark {
+        border-radius: 0.2rem;
+        background: color-mix(in oklab, var(--color-warning) 45%, transparent);
+        color: inherit;
+    }
+</style>
+
+<script>
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+    const form = $<HTMLFormElement>("blog-filters");
+    const input = $<HTMLInputElement>("blog-search");
+    const status = $("blog-status");
+    const clear = $<HTMLButtonElement>("blog-clear");
+    const rows = [...document.querySelectorAll<HTMLElement>("[data-post]")].map((el) => ({
+        el,
+        slug: el.dataset.post!,
+        meta: el.dataset.meta!,
+        tags: JSON.parse(el.dataset.tags!) as string[],
+        snippet: el.querySelector<HTMLElement>("[data-snippet]")!,
+    }));
+    const chips = [...document.querySelectorAll<HTMLElement>("[data-chip]")];
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let tag = "";
+    // Post text by slug. Until it loads, search covers titles, descriptions and tags.
+    let bodies: Record<string, string> = {};
+    let loading: Promise<void> | undefined;
+
+    function loadBodies() {
+        loading ??= fetch("/blog/search.json")
+            .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+            .then((json) => {
+                bodies = json;
+                if (input.value.trim()) render();
+            })
+            .catch(() => {
+                loading = undefined; // retry on the next search
+            });
+    }
+
+    const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    /** Show the body text around the first match, with matches marked. */
+    function showSnippet(el: HTMLElement, body: string, terms: string[]) {
+        const at = body.search(new RegExp(terms.map(escapeRegExp).join("|"), "i"));
+        const start = Math.max(0, at - 60);
+        const end = Math.min(body.length, at + 110);
+        const text = (start > 0 ? "…" : "") + body.slice(start, end).trim() + (end < body.length ? "…" : "");
+        // A capture group makes split() keep the matches, at the odd positions.
+        const parts = text.split(new RegExp(`(${terms.map(escapeRegExp).join("|")})`, "gi"));
+        el.replaceChildren(
+            ...parts.map((part, i) => {
+                if (i % 2 === 0) return part;
+                const mark = document.createElement("mark");
+                mark.textContent = part;
+                return mark;
+            }),
+        );
+        el.hidden = false;
+    }
+
+    function render() {
+        const query = input.value.trim();
+        const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+        let shown = 0;
+        for (const row of rows) {
+            const body = bodies[row.slug] ?? "";
+            const lower = body.toLowerCase();
+            const match =
+                (!tag || row.tags.includes(tag)) &&
+                terms.every((t) => row.meta.includes(t) || lower.includes(t));
+            row.el.hidden = !match;
+            if (match) shown++;
+            // Explain matches you can't already see in the title, description or tags.
+            const bodyTerms = match ? terms.filter((t) => !row.meta.includes(t)) : [];
+            if (bodyTerms.length) showSnippet(row.snippet, body, bodyTerms);
+            else row.snippet.hidden = true;
+        }
+
+        for (const chip of chips) {
+            if (chip.dataset.tag === tag) chip.setAttribute("aria-current", "true");
+            else chip.removeAttribute("aria-current");
+        }
+
+        const filtered = Boolean(query || tag);
+        const about = [query && `matching “${query}”`, tag && `tagged “${tag}”`].filter(Boolean).join(" ");
+        const noun = shown === 1 ? "post" : "posts";
+        status.textContent = `${shown || "No"} ${noun}${about && " " + about}${shown || !filtered ? "" : ". Try another word or tag."}`;
+        clear.hidden = !filtered;
+
+        const params = new URLSearchParams();
+        if (query) params.set("q", query);
+        if (tag) params.set("tag", tag);
+        const search = params.toString();
+        history.replaceState(null, "", location.pathname + (search && `?${search}`));
+    }
+
+    /** Render, gliding rows to their new places. */
+    function renderAnimated() {
+        if (reduceMotion) return render();
+        const before = new Map(rows.map(({ el }) => [el, el.hidden ? null : el.getBoundingClientRect().top]));
+        render();
+        for (const { el } of rows) {
+            if (el.hidden) continue;
+            const from = before.get(el);
+            const dy = from == null ? 0 : from - el.getBoundingClientRect().top;
+            if (from == null) el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 250, easing: "ease" });
+            else if (dy) el.animate([{ transform: `translateY(${dy}px)` }, { transform: "none" }], { duration: 300, easing: "cubic-bezier(0.2, 0.7, 0.2, 1)" });
+        }
+    }
+
+    function reset() {
+        input.value = "";
+        tag = "";
+        renderAnimated();
+    }
+
+    form.addEventListener("submit", (e) => e.preventDefault());
+    input.addEventListener("focus", loadBodies);
+    input.addEventListener("input", () => {
+        loadBodies();
+        render();
+    });
+    input.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        e.preventDefault();
+        if (input.value) {
+            input.value = "";
+            render();
+        } else input.blur();
+    });
+    clear.addEventListener("click", () => {
+        reset();
+        input.focus();
+    });
+
+    // Tag links (chips and the ones on each post) filter in place.
+    $("blog").addEventListener("click", (e) => {
+        if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+        const link = (e.target as HTMLElement).closest<HTMLElement>("[data-tag]");
+        if (!link) return;
+        e.preventDefault();
+        const next = link.dataset.tag!;
+        // Clicking the active chip again turns it off.
+        tag = link.hasAttribute("data-chip") && next === tag ? "" : next;
+        renderAnimated();
+    });
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey) return;
+        if ((e.target as HTMLElement).closest?.("input, textarea, select, [contenteditable]")) return;
+        e.preventDefault();
+        input.focus();
+    });
+
+    // Restore a shared or revisited search, e.g. /blog/?q=xss&tag=web.
+    const params = new URLSearchParams(location.search);
+    input.value = params.get("q") ?? "";
+    const wanted = params.get("tag")?.toLowerCase() ?? "";
+    if (chips.some((c) => c.dataset.tag === wanted)) tag = wanted;
+    if (input.value) loadBodies();
+    render();
+</script>

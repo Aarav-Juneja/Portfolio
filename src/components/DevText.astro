@@ -1,0 +1,10 @@
+---
+// Renders text normally in light mode and with "at" → "@" in dev (dark) mode.
+interface Props {
+    text: string;
+}
+const { text } = Astro.props;
+const dev = text.replace(/\bat\b/g, "@");
+---
+
+{dev === text ? text : <Fragment><span class="light-only">{text}</span><span class="dark-only">{dev}</span></Fragment>}

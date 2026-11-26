@@ -1,5 +1,13 @@
 ---
+import { Icon } from "astro-icon/components";
 import { skillCategories } from "~/portfolio-data";
+
+const iconMap: Record<string, string> = {
+    code: "mdi:code-tags",
+    shield: "mdi:shield-lock-outline",
+    brain: "mdi:brain",
+    tools: "mdi:tools",
+};
 ---
 
 <section id="skills" class="py-20 px-4 bg-base-200/50">
@@ -14,6 +22,12 @@ import { skillCategories } from "~/portfolio-data";
                      style={`animation-delay: ${catIndex * 100}ms`}>
                     <div class="card-body">
                         <h3 class="card-title flex items-center gap-2 text-lg">
+                            <Icon
+                                name={iconMap[category.icon] ?? "mdi:star-four-points-outline"}
+                                size={22}
+                                class="text-accent shrink-0"
+                                aria-hidden="true"
+                            />
                             <span class="text-primary">{category.name}</span>
                         </h3>
                         <div class="flex flex-wrap gap-2 mt-3">

@@ -1,10 +1,12 @@
 ---
 import Layout from "~/layouts/Layout.astro";
+import DevText from "~/components/DevText.astro";
 import {
     profile,
     experience,
     clubPositions,
     awards,
+    competitiveProgramming,
     competitions,
     skillCategories,
     goals,
@@ -12,11 +14,51 @@ import {
     coursework,
     additionalActivities,
     externalLinks,
+    resumeUrl,
+    clistUrl,
     volunteering,
 } from "~/portfolio-data";
 
+const activityTypeLabels: Record<string, { dark: string; light: string }> = {
+    publication: { dark: "[PUBLICATIONS]", light: "Publications" },
+    conference: { dark: "[CONFERENCES & TALKS]", light: "Conferences & Talks" },
+    certificate: { dark: "[CERTIFICATES]", light: "Certificates" },
+};
 const bugBounties = additionalActivities.filter((a) => a.type === "bugbounty");
-const conferences = additionalActivities.filter((a) => a.type === "conference");
+// Every non-bug-bounty activity type gets its own labeled table, so new types are never dropped.
+const activityTypeOrder = ["publication", "conference", "certificate"];
+const activityTypes = [
+    ...new Set(
+        additionalActivities
+            .map((a) => a.type)
+            .filter((t) => t !== "bugbounty"),
+    ),
+].sort(
+    (a, b) =>
+        (activityTypeOrder.indexOf(a) + 1 || 99) -
+        (activityTypeOrder.indexOf(b) + 1 || 99),
+);
+// Recency: newest first everywhere. Uses the latest 4-digit year in any of the
+// given strings ("Present" counts as ongoing); grade levels ("6th Grade") sort
+// by grade number below any calendar year. Featured items win ties.
+const recency = (...fields: (string | string[] | undefined)[]) => {
+    const text = fields.flat().filter(Boolean).join(" ");
+    if (/present/i.test(text)) return 9999;
+    const years = text.match(/\b(19|20)\d{2}\b/g)?.map(Number) ?? [];
+    if (years.length) return Math.max(...years);
+    const grade = text.match(/(\d+)(st|nd|rd|th)\s*grade/i);
+    return grade ? Number(grade[1]) : 0;
+};
+const byRecency = <T extends { sortKey: number; featured?: boolean }>(a: T, b: T) =>
+    b.sortKey - a.sortKey || Number(Boolean(b.featured)) - Number(Boolean(a.featured));
+
+const toTitleCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const skillBadgeClasses = [
+    "badge-outline",
+    "badge-primary badge-outline",
+    "badge-secondary badge-outline",
+    "badge-accent badge-outline",
+];
 const rolePriority: Record<string, number> = {
     President: 1,
     "Vice President": 2,
@@ -62,76 +104,100 @@ const orderedClubPositionYears = Object.keys(groupedClubPositions).sort(
 
 const data = {
     education: profile,
-    coursework,
+    // Current-year classes first, then the rest; no year headings.
+    coursework: [...coursework].sort((a, b) => recency(b.year) - recency(a.year)),
     experience: experience
         .map((e) => ({
             title: e.title,
             org: e.organization,
             period: e.period,
-            details: e.description,
+            details:
+                "vehicle" in e && e.vehicle
+                    ? `${e.description} Vehicle: ${e.vehicle}.`
+                    : e.description,
             featured: Boolean(e.highlight),
+            sortKey: recency(e.period),
         }))
-        .sort((a, b) => Number(b.featured) - Number(a.featured)),
+        .sort(byRecency),
     clubPositionsByYear: orderedClubPositionYears.map((year) => ({
         year,
         items: groupedClubPositions[year],
     })),
-    awards: awards.map((a) => ({
-        title: a.title,
-        year: a.year,
-        details: a.description,
-    })),
-    competitions: competitions.map((c) => ({
-        name: c.name,
-        full: c.fullName,
-        year: c.years ? c.years.join(", ") : c.year || "",
-    })),
-    skills: {
-        languages:
-            skillCategories.find((c) => c.name === "Programming Languages")
-                ?.skills || [],
-        cybersecurity:
-            skillCategories.find((c) => c.name === "Cybersecurity")?.skills ||
-            [],
-        tools:
-            skillCategories.find((c) => c.name === "Tools & Technologies")
-                ?.skills || [],
-    },
-    goals: goals.map((g) => g.title),
-    outsideCoursework: outsideCoursework.map((c) => ({
-        name: c.name,
-        issuer: c.issuer,
-        year: c.year,
-        link: c.link,
-    })),
-    additional: additionalActivities.map((a) => ({
-        title: a.title,
-        year: a.year,
-        details: a.description,
-        link: a.link || null,
-    })),
-    bugBounties: bugBounties.map((b) => ({
-        title: b.title,
-        year: b.year,
-    })),
-    conferences: conferences
-        .map((c) => ({
-            title: c.title,
-            year: c.year,
-            details: c.description,
-            link: c.link || null,
-            featured: Boolean(c.highlight),
+    awards: awards
+        .map((a) => ({
+            title: a.title,
+            year: a.year,
+            details: a.description,
+            featured: Boolean(a.highlight),
+            sortKey: recency(a.year),
         }))
-        .sort((a, b) => Number(b.featured) - Number(a.featured)),
-    volunteering: volunteering.map((v) => ({
-        title: v.title,
-        year: v.year,
+        .sort(byRecency),
+    competitiveProgramming: competitiveProgramming.map((cp) => ({
+        platform: cp.platform,
+        rating: cp.rating,
+        rank: cp.rank,
+        detail: cp.detail,
     })),
+    competitions: competitions
+        .map((c) => ({
+            name: c.name,
+            full: c.fullName,
+            year: c.years ? c.years.join(", ") : c.year || "",
+            sortKey: recency(c.years, c.year),
+        }))
+        .sort(byRecency),
+    skills: skillCategories.map((c, i) => ({
+        name: c.name,
+        skills: c.skills,
+        badgeClass: skillBadgeClasses[i % skillBadgeClasses.length],
+    })),
+    goals: goals.map((g) => g.title),
+    outsideCoursework: outsideCoursework
+        .map((c) => ({
+            name: c.name,
+            issuer: c.issuer,
+            year: c.year,
+            link: c.link,
+            sortKey: recency(c.year),
+        }))
+        .sort(byRecency),
+    activityGroups: activityTypes.map((type) => ({
+        type,
+        label: activityTypeLabels[type] ?? {
+            dark: `[${type.toUpperCase()}]`,
+            light: toTitleCase(type),
+        },
+        items: additionalActivities
+            .filter((a) => a.type === type)
+            .map((a) => ({
+                title: a.title,
+                year: a.year,
+                details: a.description,
+                link: a.link || null,
+                linkLabel: "videoId" in a && a.videoId ? "Watch" : "View",
+                featured: Boolean(a.highlight),
+                sortKey: recency(a.year),
+            }))
+            .sort(byRecency),
+    })),
+    bugBounties: bugBounties
+        .map((b) => ({ title: b.title, year: b.year, sortKey: recency(b.year) }))
+        .sort(byRecency),
+    volunteering: volunteering
+        .map((v) => ({
+            title: v.title,
+            year: "years" in v && v.years ? v.years.join(", ") : v.year,
+            sortKey: recency("years" in v ? v.years : undefined, v.year),
+        }))
+        .sort(byRecency),
     links: externalLinks.map((l) => ({ name: l.name, url: l.url })),
 };
 ---
 
-<Layout>
+<Layout
+    title="Reference — Aarav Juneja"
+    description="Full record of Aarav Juneja's awards, competitions, coursework, and activities."
+>
     <div class="pt-24 pb-12 px-4 max-w-4xl mx-auto">
         <h1 class="text-3xl font-bold text-primary font-mono mb-2">
             <span class="dark-only"><span class="animate-pulse">></span> ./reference.sh</span>
@@ -141,6 +207,10 @@ const data = {
             <span class="dark-only font-mono">Quick lookup for all portfolio data</span>
             <span class="light-only">A quick reference for portfolio details and highlights.</span>
         </p>
+        <a href={resumeUrl} target="_blank" rel="noopener" class="btn btn-primary btn-sm mb-8 -mt-4">
+            <span class="dark-only font-mono">$ open resume.pdf</span>
+            <span class="light-only">Download resume (PDF)</span>
+        </a>
 
         <div class="space-y-8">
             <section class="card bg-base-200">
@@ -170,6 +240,14 @@ const data = {
                                     ></tr
                                 >
                                 <tr
+                                    ><td class="font-bold">ACT</td><td
+                                        ><span class="font-bold">{data.education.act.composite}</span>
+                                        <span class="opacity-70">
+                                            (English {data.education.act.english} · Reading {data.education.act.reading} · Math {data.education.act.math} · Science {data.education.act.science})
+                                        </span></td
+                                    ></tr
+                                >
+                                <tr
                                     ><td class="font-bold">SAT</td><td
                                         >{data.education.sat}</td
                                     ></tr
@@ -180,7 +258,7 @@ const data = {
                                             data.coursework
                                                 .map((c) =>
                                                     c.description
-                                                        ? `${c.name} (${c.description})`
+                                                        ? `${c.name} (${c.description.replace(/\.$/, "")})`
                                                         : c.name,
                                                 )
                                                 .join(", ")
@@ -219,7 +297,7 @@ const data = {
                                             </td>
                                             <td>{exp.org}</td>
                                             <td>{exp.period}</td>
-                                            <td>{exp.details}</td>
+                                            <td><DevText text={exp.details} /></td>
                                         </tr>
                                     ))
                                 }
@@ -268,18 +346,59 @@ const data = {
                             <tbody>
                                 {
                                     data.awards.map((award) => (
-                                        <tr>
+                                        <tr class={award.featured ? "bg-primary/10" : ""}>
                                             <td class="font-bold">
                                                 {award.title}
+                                                {award.featured && (
+                                                    <span class="badge badge-accent badge-xs ml-2">Featured</span>
+                                                )}
                                             </td>
                                             <td>{award.year}</td>
-                                            <td>{award.details}</td>
+                                            <td><DevText text={award.details} /></td>
                                         </tr>
                                     ))
                                 }
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </section>
+
+            <section class="card bg-base-200">
+                <div class="card-body">
+                    <h2 class="card-title text-primary">
+                        <span class="dark-only font-mono">[COMPETITIVE PROGRAMMING]</span>
+                        <span class="light-only">Competitive Programming</span>
+                    </h2>
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra font-mono text-sm">
+                            <thead>
+                                <tr
+                                    ><th>Platform</th><th>Rating</th><th
+                                        >Rank</th
+                                    ><th>Details</th></tr
+                                >
+                            </thead>
+                            <tbody>
+                                {
+                                    data.competitiveProgramming.map((cp) => (
+                                        <tr>
+                                            <td class="font-bold">
+                                                {cp.platform}
+                                            </td>
+                                            <td>{cp.rating}</td>
+                                            <td>{cp.rank}</td>
+                                            <td>{cp.detail}</td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href={clistUrl} target="_blank" rel="noopener noreferrer" class="link link-primary text-sm mt-2 self-start">
+                        <span class="dark-only font-mono">$ open clist.by/coder/AaravJ</span>
+                        <span class="light-only">All contest ratings on clist.by ↗</span>
+                    </a>
                 </div>
             </section>
 
@@ -323,51 +442,23 @@ const data = {
                         <span class="light-only">Skills</span>
                     </h2>
                     <div class="space-y-3">
-                        <div>
-                            <span class="text-xs opacity-70">
-                                <span class="dark-only font-mono">Languages:</span>
-                                <span class="light-only">Languages:</span>
-                            </span>
-                            <div class="flex flex-wrap gap-1 mt-1">
-                                {
-                                    data.skills.languages.map((skill) => (
-                                        <span class="badge badge-sm badge-outline">
-                                            {skill}
-                                        </span>
-                                    ))
-                                }
-                            </div>
-                        </div>
-                        <div>
-                            <span class="text-xs opacity-70">
-                                <span class="dark-only font-mono">Cybersecurity:</span>
-                                <span class="light-only">Cybersecurity:</span>
-                            </span>
-                            <div class="flex flex-wrap gap-1 mt-1">
-                                {
-                                    data.skills.cybersecurity.map((skill) => (
-                                        <span class="badge badge-sm badge-primary badge-outline">
-                                            {skill}
-                                        </span>
-                                    ))
-                                }
-                            </div>
-                        </div>
-                        <div>
-                            <span class="text-xs opacity-70">
-                                <span class="dark-only font-mono">Tools:</span>
-                                <span class="light-only">Tools:</span>
-                            </span>
-                            <div class="flex flex-wrap gap-1 mt-1">
-                                {
-                                    data.skills.tools.map((skill) => (
-                                        <span class="badge badge-sm badge-accent badge-outline">
-                                            {skill}
-                                        </span>
-                                    ))
-                                }
-                            </div>
-                        </div>
+                        {
+                            data.skills.map((category) => (
+                                <div>
+                                    <span class="text-xs opacity-70">
+                                        <span class="dark-only font-mono">{category.name}:</span>
+                                        <span class="light-only">{category.name}:</span>
+                                    </span>
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        {category.skills.map((skill) => (
+                                            <span class={`badge badge-sm ${category.badgeClass}`}>
+                                                {skill}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))
+                        }
                     </div>
                 </div>
             </section>
@@ -448,57 +539,58 @@ const data = {
                 </div>
             </section>
 
-            <section class="card bg-base-200">
-                <div class="card-body">
-                    <h2 class="card-title text-primary">
-                        <span class="dark-only font-mono">[ADDITIONAL ACTIVITIES]</span>
-                        <span class="light-only">Additional Activities</span>
-                    </h2>
-                    <div class="overflow-x-auto">
-                        <table class="table table-zebra font-mono text-sm">
-                            <thead>
-                                <tr
-                                    ><th>Activity</th><th>Year</th><th
-                                        >Details</th
-                                    ><th>Link</th></tr
-                                >
-                            </thead>
-                            <tbody>
-                                {
-                                    data.conferences.map((item) => (
-                                        <tr class={item.featured ? "bg-accent/10" : ""}>
-                                            <td class="font-bold">
-                                                {item.title}
-                                                {item.featured && (
-                                                    <span class="badge badge-accent badge-xs ml-2">Featured</span>
-                                                )}
-                                            </td>
-                                            <td>{item.year}</td>
-                                            <td>{item.details}</td>
-                                            <td>
-                                                {item.link ? (
-                                                    <a
-                                                        href={item.link}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        class="btn btn-xs btn-primary"
-                                                    >
-                                                        View
-                                                    </a>
-                                                ) : (
-                                                    <span class="badge badge-ghost">
-                                                        -
-                                                    </span>
-                                                )}
-                                            </td>
+            {
+                data.activityGroups.map((group) => (
+                    <section class="card bg-base-200">
+                        <div class="card-body">
+                            <h2 class="card-title text-primary">
+                                <span class="dark-only font-mono">{group.label.dark}</span>
+                                <span class="light-only">{group.label.light}</span>
+                            </h2>
+                            <div class="overflow-x-auto">
+                                <table class="table table-zebra font-mono text-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Year</th>
+                                            <th>Details</th>
+                                            <th>Link</th>
                                         </tr>
-                                    ))
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
+                                    </thead>
+                                    <tbody>
+                                        {group.items.map((item) => (
+                                            <tr class={item.featured ? "bg-accent/10" : ""}>
+                                                <td class="font-bold">
+                                                    {item.title}
+                                                    {item.featured && (
+                                                        <span class="badge badge-accent badge-xs ml-2">Featured</span>
+                                                    )}
+                                                </td>
+                                                <td>{item.year}</td>
+                                                <td><DevText text={item.details} /></td>
+                                                <td>
+                                                    {item.link ? (
+                                                        <a
+                                                            href={item.link}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            class="btn btn-xs btn-primary"
+                                                        >
+                                                            {item.linkLabel}
+                                                        </a>
+                                                    ) : (
+                                                        <span class="badge badge-ghost">-</span>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+                ))
+            }
 
             <section class="card bg-base-200">
                 <div class="card-body">

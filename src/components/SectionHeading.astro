@@ -1,0 +1,22 @@
+---
+// Shared left-aligned section heading: title, plus a terminal prompt above it
+// in dark mode ("01 $ cat talks/defcon34").
+interface Props {
+    index: string; // "01"
+    eyebrow: string; // "Security"
+    title: string;
+    command?: string; // dark-mode prompt, e.g. "cat talk.txt"
+}
+const { index, eyebrow, title, command } = Astro.props;
+---
+
+<header class="mb-10" data-reveal>
+    {/* Dark mode only: light mode lets the title stand alone. */}
+    <p class="dark-only font-mono text-xs text-primary/80 mb-3">
+        {index} <span class="opacity-50">$</span> {command ?? eyebrow.toLowerCase()}
+    </p>
+    <h2 class="text-3xl md:text-5xl font-bold tracking-tight leading-tight max-w-3xl">
+        {title}
+        <slot />
+    </h2>
+</header>

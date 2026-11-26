@@ -1,13 +1,41 @@
 ---
 import Layout from "./Layout.astro";
+import DevText from "~/components/DevText.astro";
+import PostDate from "~/components/PostDate.astro";
+import PostTags from "~/components/PostTags.astro";
 import "~/styles/markdown.css";
 
-const { title } = Astro.props;
+interface Props {
+    title: string;
+    description?: string;
+    publishDate: Date;
+    tags: string[];
+}
+const { title, description, publishDate, tags } = Astro.props;
 ---
 
-<Layout navbar.shadow={true}>
-    <div class="pt-20 mb-auto px-5 py-5">
-        {title && <h1>{title}</h1>}
-        <slot />
-    </div>
+<Layout navbar.shadow={true} title={`${title} | Aarav Juneja`} description={description}>
+    <article class="max-w-3xl mx-auto px-4 pt-28 pb-24">
+        <a href="/blog/" class="inline-block py-1 text-sm text-base-content/70 hover:text-primary hover:underline underline-offset-4">
+            <span class="light-only">All posts</span>
+            <span class="dark-only font-mono">$ cd ..</span>
+        </a>
+        <header class="mt-6 mb-10 pb-8 border-b border-base-content/10">
+            <h1 class="text-4xl md:text-5xl font-bold tracking-tight leading-tight text-balance break-words">{title}</h1>
+            {
+                description && (
+                    <p class="mt-4 text-lg text-base-content/70 leading-relaxed">
+                        <DevText text={description} />
+                    </p>
+                )
+            }
+            <div class="mt-5 flex flex-wrap items-baseline gap-x-6 gap-y-1">
+                <PostDate date={publishDate} />
+                <PostTags tags={tags} />
+            </div>
+        </header>
+        <div class="post-body">
+            <slot />
+        </div>
+    </article>
 </Layout>

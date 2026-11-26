@@ -1,0 +1,140 @@
+---
+// Dark-mode "dev" view of the DEF CON 34 talk: a terminal that types
+// `cat defcon34.txt` and prints the talk details when scrolled into view.
+//
+// Progressive enhancement: the full output is server-rendered, so it is
+// readable without JS. The script only hides it and replays it once on
+// first view, and skips the replay entirely under prefers-reduced-motion.
+//
+// Abstract condensed from the official AppSec Village listing:
+// https://www.appsecvillage.com/events/dc-2026/man-in-the-browser-hijacking-javascript-apis-for-browser-persistence-and-credential-theft-1251280
+const command = "cat defcon34.txt";
+const title =
+    "Man-in-the-Browser: Hijacking JavaScript APIs for Browser Persistence and Credential Theft";
+const venue = "DEF CON 34 · AppSec Village · Las Vegas · Aug 2026";
+const abstract = [
+    "The browser is the app people use most, yet most exploits",
+    "target surfaces that antivirus watches closely.",
+    "Malicious extensions are hard to detect and useful for C2",
+    "and data capture; allow/block lists miss supply-chain risk.",
+];
+---
+
+<div
+    class="talk-terminal rounded-xl border border-primary/25 bg-base-300/80 shadow-2xl shadow-black/40 overflow-hidden font-mono text-[13px] leading-relaxed"
+    data-talk-terminal
+>
+    <div class="flex items-center gap-2 px-4 py-2.5 border-b border-base-content/10 bg-base-200/80">
+        <span class="h-3 w-3 rounded-full bg-[#ff5f57]" aria-hidden="true"></span>
+        <span class="h-3 w-3 rounded-full bg-[#febc2e]" aria-hidden="true"></span>
+        <span class="h-3 w-3 rounded-full bg-[#28c840]" aria-hidden="true"></span>
+        <span class="ml-3 text-xs text-base-content/50">aarav@portfolio: ~/talks</span>
+    </div>
+    <div class="p-5 min-h-[15rem]">
+        <p>
+            <span class="text-primary">~/talks</span>
+            <span class="text-base-content/50">$</span>
+            <span data-term-cmd data-text={command}>{command}</span><span
+                class="term-caret"
+                data-term-caret
+                aria-hidden="true"
+                hidden></span>
+        </p>
+        <div class="mt-3 space-y-3" data-term-output>
+            <p data-term-line class="text-base-content font-semibold">{title}</p>
+            <p data-term-line class="text-accent">{venue}</p>
+            <div class="text-base-content/70">
+                {abstract.map((line) => <p data-term-line>{line}</p>)}
+            </div>
+            <p data-term-line>
+                <span class="text-primary">~/talks</span>
+                <span class="text-base-content/50">$</span>
+                <span class="term-cursor" aria-hidden="true"></span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .term-cursor,
+    .term-caret {
+        display: inline-block;
+        width: 0.55em;
+        height: 1.1em;
+        margin-left: 0.15em;
+        vertical-align: text-bottom;
+        background: currentColor;
+        color: var(--color-primary);
+    }
+    .term-cursor {
+        animation: term-blink 1.05s steps(1) infinite;
+    }
+    .term-caret[hidden] {
+        display: none;
+    }
+    .talk-terminal [data-term-line].is-pending {
+        visibility: hidden;
+    }
+    @keyframes term-blink {
+        50% {
+            opacity: 0;
+        }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .term-cursor {
+            animation: none;
+        }
+    }
+</style>
+
+<script>
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+    async function play(root: HTMLElement) {
+        const cmd = root.querySelector<HTMLElement>("[data-term-cmd]");
+        const caret = root.querySelector<HTMLElement>("[data-term-caret]");
+        const lines = root.querySelectorAll<HTMLElement>("[data-term-line]");
+        if (!cmd) return;
+        const text = cmd.dataset.text ?? "";
+
+        await sleep(300);
+        for (let i = 1; i <= text.length; i++) {
+            cmd.textContent = text.slice(0, i);
+            await sleep(45 + Math.random() * 45);
+        }
+        await sleep(350);
+        if (caret) caret.hidden = true;
+        for (const line of lines) {
+            line.classList.remove("is-pending");
+            await sleep(180);
+        }
+    }
+
+    function init() {
+        if (reduceMotion || !("IntersectionObserver" in window)) return;
+        document.querySelectorAll<HTMLElement>("[data-talk-terminal]").forEach((root) => {
+            const cmd = root.querySelector<HTMLElement>("[data-term-cmd]");
+            const caret = root.querySelector<HTMLElement>("[data-term-caret]");
+            if (!cmd) return;
+            // Reset to the "before" state; the server-rendered text is the no-JS fallback.
+            cmd.textContent = "";
+            if (caret) caret.hidden = false;
+            root.querySelectorAll<HTMLElement>("[data-term-line]").forEach((l) =>
+                l.classList.add("is-pending"),
+            );
+
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    if (!entries.some((e) => e.isIntersecting)) return;
+                    observer.disconnect();
+                    play(root);
+                },
+                { threshold: 0.4 },
+            );
+            observer.observe(root);
+        });
+    }
+
+    init();
+</script>

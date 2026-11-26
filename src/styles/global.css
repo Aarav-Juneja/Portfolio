@@ -104,24 +104,23 @@ html {
     scroll-behavior: smooth;
 }
 
-h1 {
-    @apply text-4xl font-bold;
-}
+/* Base heading sizes live in the base layer so utility classes (e.g. text-8xl) can override them. */
+@layer base {
+    h1 {
+        @apply text-4xl font-bold;
+    }
 
-h2 {
-    @apply text-3xl font-bold;
-}
+    h2 {
+        @apply text-3xl font-bold;
+    }
 
-h3 {
-    @apply text-2xl font-bold;
-}
+    h3 {
+        @apply text-2xl font-bold;
+    }
 
-h4 {
-    @apply text-xl font-semibold;
-}
-
-.navbar {
-    backdrop-filter: blur(12px);
+    h4 {
+        @apply text-xl font-semibold;
+    }
 }
 
 .card {
@@ -144,17 +143,6 @@ h4 {
     transition: all 0.3s ease;
 }
 
-html {
-    animation: fadeIn 0.5s ease;
-}
-
-section {
-    animation: fadeIn 0.8s ease;
-}
-
-#hero {
-    animation: fadeIn 1s ease;
-}
 
 html[data-theme="dark"] .light-only,
 html[data-theme="light"] .dark-only {
@@ -167,4 +155,29 @@ html[data-theme="light"] .hide-in-light {
 
 html[data-theme="dark"] .hide-in-dark {
     display: none !important;
+}
+
+/* Scroll reveal (see src/scripts/motion.ts). Hidden state only applies when JS runs. */
+html.js [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+        opacity 0.7s ease,
+        transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+html.js [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    html.js [data-reveal] {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
+/* Offset in-page anchors for the fixed navbar + section nav. */
+section[id] {
+    scroll-margin-top: 6.75rem; /* 64px navbar + 44px section nav */
 }

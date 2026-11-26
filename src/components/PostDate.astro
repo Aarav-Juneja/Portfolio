@@ -1,0 +1,11 @@
+---
+// Light: "February 24, 2025". Dark: "2025-02-24".
+import { formatDate, isoDate } from "~/blog";
+
+interface Props {
+    date: Date;
+}
+const { date } = Astro.props;
+---
+
+<time datetime={isoDate(date)} class="whitespace-nowrap text-sm text-base-content/70"><span class="light-only">{formatDate(date)}</span><span class="dark-only font-mono">{isoDate(date)}</span></time>

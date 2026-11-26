@@ -1,0 +1,245 @@
+---
+import { Icon } from "astro-icon/components";
+// Light mode only: if the visitor has a Nerd Font or a programmer font
+// installed locally, show a small terminal symbol next to the theme toggle
+// that suggests (and switches to) dev mode. Detection is a local canvas width
+// check — nothing is sent anywhere.
+---
+
+<button
+    id="dev-font-hint"
+    type="button"
+    style="display: none"
+    class="light-only btn btn-ghost btn-sm btn-circle relative text-primary"
+>
+    <span
+        id="dev-font-hint-glyph"
+        class="grid place-items-center w-6 h-6 overflow-hidden font-mono text-sm leading-none"
+        aria-hidden="true">&gt;_</span
+    >
+    <span id="dev-font-hint-tux" class="grid place-items-center w-6 h-6" style="display: none" aria-hidden="true">
+        <Icon name="mdi:linux" size={20} />
+    </span>
+    <span class="dev-hint-ping absolute inset-0 m-auto w-8 h-8 rounded-full border border-primary/50" aria-hidden="true"></span>
+</button>
+
+<style>
+    .dev-hint-ping {
+        animation: devHintPing 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+    @keyframes devHintPing {
+        0% {
+            transform: scale(0.8);
+            opacity: 0.9;
+        }
+        80%,
+        100% {
+            transform: scale(1.6);
+            opacity: 0;
+        }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .dev-hint-ping {
+            animation: none;
+            opacity: 0.6;
+        }
+    }
+</style>
+
+<script>
+    const SEEN_KEY = "devFontHintSeen";
+
+    // Patched Nerd Fonts register as "<Name> Nerd Font", "<Name> Nerd Font Mono",
+    // "<Name>NF", etc. Checked first so we can draw a real Nerd Font icon.
+    const NERD_FONTS = [
+        "Symbols Nerd Font",
+        "Symbols Nerd Font Mono",
+        "JetBrainsMono Nerd Font",
+        "JetBrainsMono Nerd Font Mono",
+        "JetBrainsMono NF",
+        "FiraCode Nerd Font",
+        "FiraCode Nerd Font Mono",
+        "FiraCode NF",
+        "Hack Nerd Font",
+        "Hack Nerd Font Mono",
+        "FiraMono Nerd Font",
+        "MesloLGS NF",
+        "MesloLGS Nerd Font",
+        "MesloLGM Nerd Font",
+        "CaskaydiaCove Nerd Font",
+        "CaskaydiaCove NF",
+        "CaskaydiaMono Nerd Font",
+        "Iosevka Nerd Font",
+        "IosevkaTerm Nerd Font",
+        "SauceCodePro Nerd Font",
+        "UbuntuMono Nerd Font",
+        "DejaVuSansM Nerd Font",
+        "DejaVuSansMono Nerd Font",
+        "RobotoMono Nerd Font",
+        "Hasklug Nerd Font",
+        "VictorMono Nerd Font",
+        "GeistMono Nerd Font",
+        "BlexMono Nerd Font",
+        "0xProto Nerd Font",
+        "Inconsolata Nerd Font",
+        "InconsolataGo Nerd Font",
+        "Mononoki Nerd Font",
+        "AnonymicePro Nerd Font",
+        "ZedMono Nerd Font",
+        "CommitMono Nerd Font",
+        "Monaspice Nerd Font",
+        "MonaspiceNe Nerd Font",
+    ];
+
+    // Programmer fonts people install on purpose (not OS defaults like
+    // Menlo, Consolas, DejaVu Sans Mono or Ubuntu Mono).
+    const DEV_FONTS = [
+        "JetBrains Mono",
+        "Fira Code",
+        "Cascadia Code",
+        "Cascadia Mono",
+        "Hack",
+        "Iosevka",
+        "Iosevka Term",
+        "Source Code Pro",
+        "Victor Mono",
+        "Monaspace Neon",
+        "Monaspace Argon",
+        "Monaspace Krypton",
+        "Monaspace Radon",
+        "Monaspace Xenon",
+        "Hasklig",
+        "Input Mono",
+        "Operator Mono",
+        "Berkeley Mono",
+        "Comic Code",
+        "Commit Mono",
+        "Geist Mono",
+        "Intel One Mono",
+        "Maple Mono",
+        "Recursive Mono Linear Static",
+        "Space Mono",
+        "mononoki",
+        "0xProto",
+        "Martian Mono",
+        "Fantasque Sans Mono",
+    ];
+
+    const BASES = ["monospace", "sans-serif", "serif"] as const;
+    const SAMPLE = "mmmmmmmmmmlli10OoWW@#&{}[]=>-";
+    const SIZE = "72px";
+
+    function makeDetector() {
+        const ctx = document.createElement("canvas").getContext("2d");
+        if (!ctx) return null;
+        const baseWidths = BASES.map((b) => {
+            ctx.font = `${SIZE} ${b}`;
+            return ctx.measureText(SAMPLE).width;
+        });
+        return (family: string) =>
+            BASES.some((b, i) => {
+                ctx.font = `${SIZE} "${family}", ${b}`;
+                return ctx.measureText(SAMPLE).width !== baseWidths[i];
+            });
+    }
+
+    function seen() {
+        try {
+            return localStorage.getItem(SEEN_KEY) === "1";
+        } catch {
+            return false;
+        }
+    }
+    function markSeen() {
+        try {
+            localStorage.setItem(SEEN_KEY, "1");
+        } catch {}
+    }
+
+    // Desktop Linux / BSD (not Android or ChromeOS). Firefox's
+    // resistFingerprinting reports Windows, so this simply won't fire there.
+    function detectLinux() {
+        const uaData = (navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData;
+        const text = `${uaData?.platform ?? ""} ${navigator.platform ?? ""} ${navigator.userAgent}`;
+        if (/android|cros/i.test(text)) return false;
+        return /linux|x11|freebsd|openbsd|netbsd/i.test(text);
+    }
+
+    function init() {
+        const btn = document.getElementById("dev-font-hint") as HTMLButtonElement | null;
+        const glyph = document.getElementById("dev-font-hint-glyph");
+        const tux = document.getElementById("dev-font-hint-tux");
+        const toggle = document.getElementById("theme-toggle") as HTMLInputElement | null;
+        if (!btn || !glyph || !tux || !toggle) return;
+
+        // Visit any page with ?devhint to bring the hint back and log diagnostics.
+        const debug = new URLSearchParams(location.search).has("devhint");
+        const log = (...args: unknown[]) => debug && console.info("[devhint]", ...args);
+        if (debug) {
+            try {
+                localStorage.removeItem(SEEN_KEY);
+            } catch {}
+        }
+        if (seen()) return log("hidden: already dismissed / dark mode used on this browser");
+
+        const has = makeDetector();
+        const nerd = has ? NERD_FONTS.find(has) : undefined;
+        const font = nerd ?? (has ? DEV_FONTS.find(has) : undefined);
+        const linux = detectLinux();
+        const uaData = (navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData;
+        log({
+            theme: document.documentElement.getAttribute("data-theme"),
+            userAgent: navigator.userAgent,
+            platform: navigator.platform,
+            uaDataPlatform: uaData?.platform,
+            canvas: Boolean(has),
+            nerdFont: nerd ?? null,
+            devFont: font ?? null,
+            linux,
+            fontWidths: has ? NERD_FONTS.concat(DEV_FONTS).filter(has) : "no canvas",
+        });
+        if (!font && !linux) return log("hidden: no dev font or Linux detected");
+
+        if (linux && nerd) {
+            // nf-fa-linux (Tux), drawn with the visitor's own Nerd Font.
+            glyph.textContent = "\uf17c";
+            glyph.style.fontFamily = `"${nerd}", monospace`;
+            glyph.classList.replace("text-sm", "text-lg");
+        } else if (nerd) {
+            // nf-oct-terminal, drawn with the visitor's own Nerd Font.
+            glyph.textContent = "\uf489";
+            glyph.style.fontFamily = `"${nerd}", monospace`;
+            glyph.classList.replace("text-sm", "text-lg");
+        } else if (linux) {
+            glyph.style.display = "none";
+            tux.style.display = "";
+        }
+
+        const found = [linux && "Linux", font].filter(Boolean).join(" + ");
+        const label = `${found} detected. Looks like you're a developer. Switch to dev mode?`;
+        btn.title = label;
+        btn.setAttribute("aria-label", label);
+        btn.style.display = "";
+        log(
+            document.documentElement.getAttribute("data-theme") === "light"
+                ? "shown"
+                : "ready, but only visible in light mode (current theme is dark)",
+        );
+
+        btn.addEventListener("click", () => {
+            markSeen();
+            btn.style.display = "none";
+            if (toggle.checked) toggle.click(); // checked = light; click → dark (fires change)
+        });
+
+        // Once they find dev mode on their own, stop suggesting it.
+        new MutationObserver(() => {
+            if (document.documentElement.getAttribute("data-theme") === "dark") {
+                markSeen();
+                btn.style.display = "none";
+            }
+        }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    }
+
+    init();
+</script>

@@ -1,0 +1,200 @@
+---
+// Recognition: stat strip (replaces the old Competitive Programming section),
+// a vertical timeline of highlighted awards grouped by year, and the rest of
+// the awards tucked behind a native <details>.
+import SectionHeading from "./SectionHeading.astro";
+import DevText from "./DevText.astro";
+import { awards, competitiveProgramming } from "~/portfolio-data";
+
+interface Props {
+    hiddenTitles?: string[];
+}
+const { hiddenTitles = [] } = Astro.props;
+
+const visibleAwards = awards.filter((a) => !hiddenTitles.includes(a.title));
+const highlighted = visibleAwards.filter((a) => a.highlight);
+const others = visibleAwards
+    .filter((a) => !a.highlight)
+    .sort((a, b) => Number(b.year) - Number(a.year));
+
+// Group highlights by year, newest first (stable order within a year).
+const years = [...new Set(highlighted.map((a) => a.year))].sort(
+    (a, b) => Number(b) - Number(a),
+);
+const groups = years.map((year) => ({
+    year,
+    items: highlighted.filter((a) => a.year === year),
+}));
+
+// ---- Stat strip, derived from data ----
+type Stat = {
+    prefix?: string;
+    value?: number; // counted up when present
+    text?: string; // used verbatim when value is absent
+    suffix?: string;
+    label: string;
+    sub: string;
+};
+
+// Split "2000+" into 2000 and "+".
+const parseRating = (rating: string) => {
+    const m = rating.match(/^([\d,]+)(.*)$/);
+    return m ? { value: Number(m[1].replace(/,/g, "")), suffix: m[2] } : null;
+};
+
+const stats: Stat[] = [];
+
+const cyberQuest = awards.find((a) => a.title.includes("CyberQuest"));
+if (cyberQuest) {
+    stats.push({
+        prefix: "#",
+        value: 1,
+        label: "CyberQuest",
+        sub: `National, Advanced · ${cyberQuest.year}`,
+    });
+}
+
+const uscc = awards.find((a) => a.title.includes("US Cyber Challenge"));
+if (uscc) {
+    stats.push({
+        prefix: "Top ",
+        value: 100,
+        label: "US Cyber Challenge",
+        sub: "of 13,000+ participants",
+    });
+}
+
+for (const platform of ["LeetCode", "Codeforces"]) {
+    const entry = competitiveProgramming.find((c) => c.platform === platform);
+    if (!entry) continue;
+    const parsed = parseRating(entry.rating);
+    stats.push({
+        ...(parsed ? parsed : { text: entry.rating }),
+        label: `${entry.platform} · ${entry.rank}`,
+        sub: entry.detail,
+    });
+}
+
+// Remaining competitive-programming entries (e.g. USACO Silver) as small labels.
+const extraCp = competitiveProgramming.filter(
+    (c) => !["LeetCode", "Codeforces"].includes(c.platform),
+);
+---
+
+<section id="awards" class="py-24 px-4">
+    <div class="max-w-6xl mx-auto">
+        <SectionHeading
+            index="03"
+            eyebrow="Recognition"
+            title="Ranked, placed, and occasionally first."
+            command="ls awards/"
+        />
+
+        <!-- Stat strip -->
+        <dl class="grid grid-cols-2 lg:grid-cols-4 gap-px bg-base-content/10 border border-base-content/10 rounded-box overflow-hidden">
+            {stats.map((s, i) => (
+                <div
+                    class="bg-base-100 p-5 md:p-6 flex flex-col gap-1"
+                    data-reveal
+                    data-reveal-delay={String(i * 90)}
+                >
+                    <dt class="order-2 text-sm font-semibold mt-1">{s.label}</dt>
+                    <dd class="order-1 font-mono font-bold text-3xl md:text-4xl leading-none text-primary tabular-nums whitespace-nowrap">
+                        {s.prefix && <span class="text-primary/60">{s.prefix}</span>}{s.value !== undefined ? <span data-countup={String(s.value)}>{s.value}</span> : <span>{s.text}</span>}{s.suffix && <span class="text-primary/60">{s.suffix}</span>}
+                    </dd>
+                    <dd class="order-3 text-xs text-base-content/60 leading-snug">{s.sub}</dd>
+                </div>
+            ))}
+        </dl>
+        {extraCp.length > 0 && (
+            <p class="mt-3 flex flex-wrap gap-2 text-xs font-mono text-base-content/60" data-reveal>
+                {extraCp.map((c) => (
+                    <span class="badge badge-ghost badge-sm font-mono">
+                        {c.platform} {c.rating}
+                    </span>
+                ))}
+            </p>
+        )}
+
+        <!-- Highlights timeline -->
+        <div class="mt-20 relative">
+            <div
+                class="absolute left-[0.4375rem] md:left-[7.625rem] top-2 bottom-2 w-px bg-base-content/15"
+                aria-hidden="true"
+            ></div>
+
+            <ol class="space-y-14" role="list">
+                {groups.map((group) => (
+                    <li class="relative">
+                        <h3
+                            class="font-mono text-sm md:absolute md:left-0 md:top-0 md:w-24 md:text-right pl-8 md:pl-0 mb-4 md:mb-0 text-base-content/60"
+                            data-reveal
+                        >
+                            <span class="light-only font-semibold tracking-wide">{group.year}</span>
+                            <span class="dark-only text-primary">[{group.year}]</span>
+                        </h3>
+                        <ol class="space-y-8 md:pl-36" role="list">
+                            {group.items.map((award, i) => (
+                                <li
+                                    class="relative pl-8 md:pl-0"
+                                    data-reveal
+                                    data-reveal-delay={String(i * 110)}
+                                >
+                                    <span
+                                        class="absolute left-0 md:-left-[1.8125rem] top-1.5 size-[0.9375rem] rounded-full border-2 border-primary bg-base-100 timeline-dot"
+                                        aria-hidden="true"
+                                    ></span>
+                                    <h4 class="text-lg md:text-xl font-semibold leading-snug">
+                                        <span class="dark-only font-mono text-primary/70 mr-1">&gt;</span>
+                                        {award.title}
+                                    </h4>
+                                    <p class="mt-1 text-base-content/70 max-w-2xl leading-relaxed">
+                                        <DevText text={award.description} />
+                                    </p>
+                                </li>
+                            ))}
+                        </ol>
+                    </li>
+                ))}
+            </ol>
+        </div>
+
+        <!-- Everything else -->
+        {others.length > 0 && (
+            <details class="group mt-16 md:ml-36 border-t border-base-content/10 pt-6" data-reveal>
+                <summary class="cursor-pointer list-none inline-flex items-center gap-2 font-mono text-sm text-primary hover:underline underline-offset-4 select-none [&::-webkit-details-marker]:hidden">
+                    <span class="inline-block transition-transform group-open:rotate-90" aria-hidden="true">›</span>
+                    <span class="group-open:hidden">Show all {visibleAwards.length} awards</span>
+                    <span class="hidden group-open:inline">Hide {others.length} more awards</span>
+                </summary>
+                <ul class="mt-6 divide-y divide-base-content/10" role="list">
+                    {others.map((award) => (
+                        <li class="py-3 grid grid-cols-[3.5rem_1fr] gap-x-4">
+                            <span class="font-mono text-xs text-base-content/50 pt-0.5">
+                                <span class="light-only">{award.year}</span>
+                                <span class="dark-only">[{award.year}]</span>
+                            </span>
+                            <div>
+                                <p class="font-medium text-sm">{award.title}</p>
+                                <p class="text-xs text-base-content/60 leading-snug mt-0.5"><DevText text={award.description} /></p>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+                <a
+                    href="/reference"
+                    class="mt-6 inline-flex items-center gap-1 text-sm font-mono text-base-content/70 hover:text-primary"
+                >
+                    Full record on the reference page <span aria-hidden="true">→</span>
+                </a>
+            </details>
+        )}
+    </div>
+</section>
+
+<style>
+    /* Dark "dev mode": dots glow like terminal LEDs. */
+    :global(html[data-theme="dark"]) .timeline-dot {
+        box-shadow: 0 0 10px color-mix(in oklab, var(--color-primary) 60%, transparent);
+    }
+</style>

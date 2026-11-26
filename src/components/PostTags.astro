@@ -1,0 +1,26 @@
+---
+// Light: "#ctf #web". Dark: git-log decoration, "(tag: ctf, tag: web)".
+import { tagUrl } from "~/blog";
+
+interface Props {
+    tags: string[];
+}
+const { tags } = Astro.props;
+---
+
+{
+    tags.length > 0 && (
+        <>
+            <p class="light-only flex flex-wrap gap-x-4 text-sm">
+                {tags.map((tag) => (
+                    <a href={tagUrl(tag)} data-tag={tag} class="py-1 text-base-content/70 hover:text-primary hover:underline underline-offset-4">#{tag}</a>
+                ))}
+            </p>
+            <p class="dark-only py-1 font-mono text-sm leading-relaxed text-warning">
+                ({tags.map((tag, i) => (
+                    <Fragment>{i > 0 && ", "}<a href={tagUrl(tag)} data-tag={tag} class="whitespace-nowrap hover:underline underline-offset-4">tag: {tag}</a></Fragment>
+                ))})
+            </p>
+        </>
+    )
+}

@@ -1,0 +1,136 @@
+---
+import SectionHeading from "./SectionHeading.astro";
+import { skillCategories } from "~/portfolio-data";
+
+// Static class lists per category so Tailwind can see them.
+const tints: Record<string, { chip: string; dot: string }> = {
+    code: { chip: "border-primary/30 bg-primary/5", dot: "bg-primary" },
+    shield: { chip: "border-accent/30 bg-accent/5", dot: "bg-accent" },
+    brain: { chip: "border-secondary/30 bg-secondary/5", dot: "bg-secondary" },
+    tools: { chip: "border-info/30 bg-info/5", dot: "bg-info" },
+};
+const fallbackTint = { chip: "border-base-content/20 bg-base-content/5", dot: "bg-base-content" };
+
+type Chip = { skill: string; category: string; icon: string };
+const toChips = (cats: typeof skillCategories): Chip[] =>
+    cats.flatMap((c) => c.skills.map((skill) => ({ skill, category: c.name, icon: c.icon })));
+
+// Three rows: languages / security + AI / tools.
+const byIcon = (icon: string) => skillCategories.filter((c) => c.icon === icon);
+const grouped = new Set(["code", "shield", "brain", "tools"]);
+const rows = [
+    toChips(byIcon("code")),
+    toChips([...byIcon("shield"), ...byIcon("brain")]),
+    toChips([...byIcon("tools"), ...skillCategories.filter((c) => !grouped.has(c.icon))]),
+].filter((r) => r.length > 0);
+---
+
+<section id="skills" class="py-16 px-4 relative z-10">
+    <div class="max-w-6xl mx-auto">
+        <SectionHeading index="04" eyebrow="Toolkit" title="Languages, security, and the tools I build with." command="ls ~/toolkit" />
+
+        <!-- Legend -->
+        <ul class="flex flex-wrap gap-x-5 gap-y-2 mb-6 font-mono text-xs text-base-content/60" role="list" data-reveal>
+            {skillCategories.map((c) => (
+                <li class="flex items-center gap-2">
+                    <span class={`inline-block size-2 rounded-full ${(tints[c.icon] ?? fallbackTint).dot}`} aria-hidden="true"></span>
+                    {c.name}
+                </li>
+            ))}
+        </ul>
+
+        <div class="space-y-3" data-reveal data-reveal-delay="100">
+            {rows.map((row, i) => (
+                <div
+                    class="marquee group rounded-box focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
+                    tabindex="0"
+                    role="region"
+                    aria-label={`${[...new Set(row.map((c) => c.category))].join(" and ")} skills (focus to pause)`}
+                >
+                    <div class={`marquee-track ${i % 2 === 1 ? "reverse" : ""}`} style={`--duration: ${Math.max(28, row.length * 3.2)}s`}>
+                        {[0, 1].map((copy) => (
+                            <ul class="marquee-list" role="list" aria-hidden={copy === 1 ? "true" : undefined}>
+                                {row.map((chip) => (
+                                    <li
+                                        class={`inline-flex items-center gap-2 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm font-medium ${(tints[chip.icon] ?? fallbackTint).chip}`}
+                                        title={chip.category}
+                                    >
+                                        <span class={`inline-block size-1.5 rounded-full ${(tints[chip.icon] ?? fallbackTint).dot}`} aria-hidden="true"></span>
+                                        {chip.skill}
+                                    </li>
+                                ))}
+                            </ul>
+                        ))}
+                    </div>
+                </div>
+            ))}
+        </div>
+    </div>
+</section>
+
+<style>
+    .marquee {
+        overflow: hidden;
+        -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+        mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+    }
+    .marquee-track {
+        display: flex;
+        width: max-content;
+        animation: marquee var(--duration, 40s) linear infinite;
+        will-change: transform;
+    }
+    /* Paused while scrolled out of view (set by the script below). */
+    #skills:not(.in-view) .marquee-track {
+        animation-play-state: paused;
+    }
+    .marquee-track.reverse {
+        animation-direction: reverse;
+    }
+    .marquee:hover .marquee-track,
+    .marquee:focus-within .marquee-track {
+        animation-play-state: paused;
+    }
+    .marquee-list {
+        display: flex;
+        gap: 0.625rem;
+        /* Trailing space equal to the gap keeps the loop seamless. */
+        padding-right: 0.625rem;
+        padding-block: 0.25rem;
+        margin: 0;
+        list-style: none;
+    }
+    @keyframes marquee {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-50%);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .marquee {
+            -webkit-mask-image: none;
+            mask-image: none;
+        }
+        .marquee-track {
+            animation: none;
+            width: auto;
+        }
+        .marquee-list {
+            flex-wrap: wrap;
+            padding-right: 0;
+        }
+        .marquee-list[aria-hidden="true"] {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+    const skills = document.getElementById("skills");
+    if (skills && "IntersectionObserver" in window) {
+        new IntersectionObserver(([e]) => skills.classList.toggle("in-view", e.isIntersecting)).observe(skills);
+    } else skills?.classList.add("in-view");
+</script>

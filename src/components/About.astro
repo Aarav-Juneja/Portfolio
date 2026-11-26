@@ -1,0 +1,96 @@
+---
+import SectionHeading from "./SectionHeading.astro";
+import { goals } from "~/portfolio-data";
+
+const interests = ["Chess", "Cybersecurity", "Coding", "Robotics"];
+
+---
+
+<section id="about" class="py-16 px-4 relative z-10">
+    <div class="max-w-6xl mx-auto">
+        <SectionHeading index="05" eyebrow="About" title="A bit about me." command="cat about.txt" />
+
+        <div class="grid gap-10 md:grid-cols-5 md:gap-12">
+            <!-- Personal blurb -->
+            <div class="md:col-span-3 space-y-4 text-lg leading-relaxed text-base-content/85">
+                <p class="font-mono text-base dark-only">
+                    <span class="text-primary">const</span> passion = [<span class="text-accent">"cybersecurity"</span>, <span class="text-accent">"robotics"</span>, <span class="text-accent">"applied AI"</span>, <span class="text-accent">"building things"</span>];
+                </p>
+                <p>
+                    I'm a <span class="text-primary font-semibold">junior</span> <span class="light-only">at</span><span class="dark-only">@</span> Amador Valley High School with a deep
+                    passion for cybersecurity, robotics, applied AI, and building things. I love tackling complex
+                    challenges, whether it's breaking (and securing) code, leading autonomous systems for our RoboSub
+                    team, or building apps that people actually use.
+                </p>
+                <p>
+                    When I'm not coding, you'll find me playing chess, tinkering with new technologies, or exploring the
+                    latest in security research.
+                </p>
+                <ul class="flex flex-wrap gap-2 pt-1" role="list" aria-label="Interests">
+                    {interests.map((interest) => (
+                        <li class="rounded-full border border-base-content/15 px-3 py-1 text-xs font-mono text-base-content/70">
+                            {interest}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <!-- Currently -->
+            <div class="md:col-span-2">
+                <!-- Dark: terminal output -->
+                <div class="dark-only rounded-box border border-primary/25 bg-base-300/70 font-mono text-sm overflow-hidden">
+                    <div class="flex items-center gap-1.5 px-3 py-2 border-b border-primary/15 bg-base-100/40" aria-hidden="true">
+                        <span class="size-2.5 rounded-full bg-error/70"></span>
+                        <span class="size-2.5 rounded-full bg-warning/70"></span>
+                        <span class="size-2.5 rounded-full bg-success/70"></span>
+                    </div>
+                    <div class="p-4 space-y-3">
+                        <p class="text-primary"><span class="opacity-60">$</span> cat now.txt</p>
+                        <ul class="space-y-2.5" role="list" aria-label="Currently working on">
+                            {goals.map((goal) => (
+                                <li>
+                                    <span class="text-accent">&gt;</span> <span class="text-base-content">{goal.title}</span>
+                                    <span class="block pl-4 text-base-content/55 text-xs leading-relaxed">{goal.description}</span>
+                                </li>
+                            ))}
+                        </ul>
+                        <p class="text-primary" aria-hidden="true"><span class="opacity-60">$</span> <span class="terminal-cursor">_</span></p>
+                    </div>
+                </div>
+
+                <!-- Light: simple list -->
+                <div class="light-only">
+                    <h3 class="text-xs font-semibold uppercase tracking-[0.18em] text-base-content/55 mb-4">Currently</h3>
+                    <ul class="divide-y divide-base-content/10 border-y border-base-content/10" role="list">
+                        {goals.map((goal) => (
+                            <li class="flex gap-3 py-3">
+                                <span class="text-lg leading-6" aria-hidden="true">{goal.icon}</span>
+                                <div>
+                                    <p class="font-semibold leading-6">{goal.title}</p>
+                                    <p class="text-sm text-base-content/60">{goal.description}</p>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<style>
+    .terminal-cursor {
+        animation: blink 1.1s steps(1) infinite;
+    }
+    @keyframes blink {
+        50% {
+            opacity: 0;
+        }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .terminal-cursor {
+            animation: none;
+        }
+    }
+</style>

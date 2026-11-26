@@ -1,0 +1,36 @@
+---
+import { competitiveProgramming } from "~/portfolio-data";
+---
+
+<section id="competitive-programming" class="py-16 px-4 bg-base-200/40 relative z-10">
+    <div class="max-w-5xl mx-auto">
+        <div class="font-mono text-sm text-primary mb-4 opacity-80 dark-only text-center">
+            <span>&gt; cat ratings.json</span>
+        </div>
+        <h2 class="text-3xl font-bold mb-10 text-center">
+            <span class="border-b-4 border-primary pb-2">Competitive Programming</span>
+        </h2>
+
+        <ul class="grid sm:grid-cols-3 gap-6" role="list">
+            {competitiveProgramming.map((entry, index) => (
+                <li
+                    class="card bg-base-300 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+                    style={`animation: fadeInUp 0.5s ease forwards ${index * 100}ms; opacity: 0;`}
+                >
+                    <div class="card-body items-center text-center gap-1">
+                        <span class="text-xs uppercase tracking-[0.18em] text-base-content/60 font-semibold">
+                            {entry.platform}
+                        </span>
+                        <span class="text-4xl md:text-5xl font-bold font-mono text-primary leading-tight">
+                            {entry.rating}
+                        </span>
+                        <span class="badge badge-accent badge-outline font-mono mt-1">
+                            {entry.rank}
+                        </span>
+                        <p class="text-base-content/70 text-sm mt-2">{entry.detail}</p>
+                    </div>
+                </li>
+            ))}
+        </ul>
+    </div>
+</section>

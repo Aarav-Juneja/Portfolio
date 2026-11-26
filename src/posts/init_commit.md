@@ -1,7 +1,8 @@
 ---
 title: "Init Commit"
 description: "This is the first blog post"
-publishDate: 2024-2-24
+publishDate: 2025-02-24
+tags: [about me, programming, cybersecurity, physics]
 ---
 
 Hi, I'm Aarav Juneja, a freshman in high school. For this first post, I would like to give a general overview of my interests, passions, and what I spend my time on.

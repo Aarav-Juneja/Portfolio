@@ -4,7 +4,7 @@ import Layout from "~/layouts/Layout.astro";
 
 <Layout>
     <div id="page-404" class="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-        <div id="sweep-overlay" class="absolute inset-0 z-10 pointer-events-none" style="width: 0%;"></div>
+        <div id="sweep-overlay" class="absolute inset-0 z-10 pointer-events-none bg-base-300" style="width: 0%;"></div>
         <div class="relative z-20 flex flex-col items-center gap-6 px-4">
             <h1 class="text-6xl md:text-8xl font-bold font-mono opacity-80">404</h1>
             <p class="text-xl md:text-2xl opacity-60">Page not found</p>
@@ -23,13 +23,9 @@ import Layout from "~/layouts/Layout.astro";
     </div>
 
     <style is:global>
+        /* Same fill as the top navbar (bg-base-300) so the sweep matches it exactly. */
         #sweep-overlay {
-            background-color: #e5e5e5;
             transition: none;
-        }
-
-        html[data-theme="dark"] #sweep-overlay {
-            background-color: #1a1a1a;
         }
 
         #sweep-slider {

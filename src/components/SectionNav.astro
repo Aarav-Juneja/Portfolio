@@ -1,0 +1,123 @@
+---
+// Sticky in-page nav that highlights the section currently in view.
+const sections = [
+    { id: "security", label: "Security" },
+    { id: "robotics", label: "Robotics" },
+    { id: "awards", label: "Awards" },
+    { id: "skills", label: "Toolkit" },
+    { id: "about", label: "About" },
+];
+---
+
+<nav
+    id="section-nav"
+    aria-label="Page sections"
+    class="sticky top-16 z-40 bg-base-300"
+>
+    <ul class="max-w-6xl mx-auto px-4 flex gap-1 overflow-x-auto no-scrollbar">
+        {
+            sections.map((s, i) => (
+                <li class="shrink-0">
+                    <a
+                        href={`#${s.id}`}
+                        data-section-link={s.id}
+                        class="section-link relative block px-3 py-3 text-sm text-base-content/60 hover:text-base-content transition-colors"
+                    >
+                        <span class="dark-only font-mono">
+                            <span class="opacity-50">0{i + 1}</span> {s.label.toLowerCase()}
+                        </span>
+                        <span class="light-only font-medium">{s.label}</span>
+                    </a>
+                </li>
+            ))
+        }
+        <li class="dark-only ml-auto shrink-0 self-center pl-4 font-mono text-xs text-base-content/40" aria-hidden="true">
+            press 1–{sections.length} to jump
+        </li>
+    </ul>
+</nav>
+
+<style>
+    .no-scrollbar {
+        scrollbar-width: none;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .section-link::after {
+        content: "";
+        position: absolute;
+        left: 0.75rem;
+        right: 0.75rem;
+        bottom: 0;
+        height: 2px;
+        background: var(--color-primary);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+    }
+    .section-link[aria-current="true"] {
+        color: var(--color-base-content);
+    }
+    .section-link[aria-current="true"]::after {
+        transform: scaleX(1);
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .section-link::after {
+            transition: none;
+        }
+    }
+</style>
+
+<script>
+    const links = new Map<string, HTMLAnchorElement>();
+    document
+        .querySelectorAll<HTMLAnchorElement>("[data-section-link]")
+        .forEach((a) => links.set(a.dataset.sectionLink!, a));
+
+    const visible = new Map<string, number>();
+
+    function setActive(id: string | null) {
+        links.forEach((a, key) => {
+            if (key === id) {
+                a.setAttribute("aria-current", "true");
+                a.scrollIntoView({ block: "nearest", inline: "nearest" });
+            } else a.removeAttribute("aria-current");
+        });
+    }
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            for (const e of entries) {
+                if (e.isIntersecting) visible.set(e.target.id, e.intersectionRatio);
+                else visible.delete(e.target.id);
+            }
+            // Active = the topmost section currently crossing the middle band.
+            const order = [...links.keys()];
+            const active = order.find((id) => visible.has(id)) ?? null;
+            setActive(active);
+        },
+        { rootMargin: "-40% 0px -55% 0px", threshold: [0, 0.01] },
+    );
+
+    links.forEach((_, id) => {
+        const el = document.getElementById(id);
+        if (el) observer.observe(el);
+    });
+
+    // Numbered sections: typing a section's number jumps to it.
+    const ids = [...links.keys()];
+    document.addEventListener("keydown", (e) => {
+        if (e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
+        const t = e.target as HTMLElement | null;
+        if (t?.closest("input, textarea, select, [contenteditable]:not([contenteditable='false'])")) return;
+        const n = Number(e.key);
+        if (!Number.isInteger(n) || n < 1 || n > ids.length) return;
+        const section = document.getElementById(ids[n - 1]);
+        if (!section) return;
+        e.preventDefault();
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        section.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+        history.replaceState(null, "", `#${ids[n - 1]}`);
+    });
+</script>
